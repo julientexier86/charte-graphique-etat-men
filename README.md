@@ -1,5 +1,7 @@
 # Générateur charte graphique de l'État — MEN/MESRI
 
+![HTML](https://img.shields.io/badge/HTML-fichier%20autonome-E34F26?logo=html5&logoColor=white) ![Type](https://img.shields.io/badge/Type-site%20statique-0f766e) ![Deploy](https://img.shields.io/badge/Deploy-GitHub%20Pages-222?logo=githubpages&logoColor=white) ![Serveur](https://img.shields.io/badge/Serveur-aucun-2e7d32)
+
 Outil autonome (fichier HTML unique, sans serveur, sans dépendance externe) pour produire des documents conformes à la **charte graphique des services déconcentrés de l'État** du ministère de l'Éducation nationale et de l'Enseignement supérieur.
 
 
