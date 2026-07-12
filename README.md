@@ -24,8 +24,8 @@ https://julientexier86.github.io/charte-graphique-etat-men/charte_etat_final_2.h
 | **Réseaux sociaux** | Bannières Instagram (540×540), Twitter/X (960×540), Stories (1080×1920), **LinkedIn (1200×627), couverture Facebook (851×315), miniature YouTube (1280×720)** | PNG |
 | **Présentation** | **Constructeur de diaporama** : couverture, contenu, chiffres clés, clôture — ajout/réorganisation/suppression de diapositives, 16/9 ou A4 | PNG (diapo ou ZIP) / **.pptx multi-diapositives** |
 | **Fond d'écran visio** | Arrière-plan Teams/Zoom 1920×1080 (styles bleu, blanc, split) | PNG |
-| **Documents types** | **Convocation · ordre du jour · attestation · feuille d'émargement** — gabarits A4 à champs adaptatifs, émargement paginé automatiquement, **invitation calendrier jointe** | .doc / PNG / impression A4 / HTML / **.ics** |
-| **Génération en masse** | Import CSV annuaire (prénom, nom, poste, tél, mél) → signatures, cartes de visite et **badges nominatifs** de toute une équipe | ZIP (HTML + PNG) |
+| **Documents types** | Convocation, ordre du jour, attestation, feuille d'émargement, **arrêté/décision, procès-verbal de réunion, ordre de mission, newsletter** — gabarits A4 à champs adaptatifs, pagination automatique, invitation calendrier jointe | .doc / PNG / impression A4 / HTML / .ics |
+| **Génération en masse** | Import CSV annuaire (prénom, nom, poste, tél, mél) → signatures, cartes de visite, badges nominatifs et **certificats de participation** de toute une équipe | ZIP (HTML + PNG) |
 | **Affiche événement** | Flyer A4/A3 portrait : accroche, bloc date/heure/lieu, description, contact | PNG / impression / HTML |
 | **Étiquette / Enveloppe** | Bloc-marque expéditeur réduit + destinataire, enveloppe DL (220×110 mm) ou étiquette | PNG / impression / HTML |
 | **Gabarits officiels** | Modèles Office MEN (papeterie, présentation 16:9 et 4:3) + diaporama académie de Poitiers | .docx / .pptx |
@@ -36,12 +36,19 @@ https://julientexier86.github.io/charte-graphique-etat-men/charte_etat_final_2.h
 - **Sauvegarde automatique** : toutes les saisies sont conservées dans le navigateur (localStorage) et restaurées à la visite suivante. Le bouton **« Réinitialiser l'outil »** efface tout.
 - **Partage en équipe** : **« Exporter le profil (JSON) »** produit un fichier de configuration à diffuser (par exemple à tout un établissement) ; **« Importer un profil »** le recharge en un clic.
 
+### Documents officiels supplémentaires
+
+- **Arrêté / décision** : structure réglementaire complète — visas (« Vu … »), considérants optionnels, articles numérotés automatiquement (1er, 2, 3…), formule « Fait à… le… » et signature. Pagination automatique si le nombre de visas/articles dépasse une page.
+- **Procès-verbal de réunion** : rempli *après* la réunion (contrairement à l'ordre du jour, rempli avant) — listes Présents / Absents-excusés, puis décisions et points abordés au fil du texte.
+- **Ordre de mission** : agent concerné, destination, dates, moyen de transport optionnel — articles générés automatiquement dans le formalisme réglementaire.
+- **Newsletter / bulletin interne** : document multi-sections — chaque section commence par une ligne `## Titre` dans le champ de saisie, mise en forme automatiquement (titre coloré, corps de texte), pagination automatique sur plusieurs pages si besoin.
+
 ### Génération en masse et dossier de réunion
 
-- **Génération en masse** (onglet dédié) : collez ou importez un CSV (colonnes `prenom`, `nom`, `poste`, `tel`, `mail` — virgule ou point-virgule, en-têtes tolérants aux variantes) et générez en un ZIP les signatures HTML, cartes de visite PNG et **badges nominatifs** (nom, poste, événement) de toute une équipe. Les lignes incomplètes (nom et prénom manquants) sont signalées et ignorées sans bloquer le reste.
+- **Génération en masse** (onglet dédié) : collez ou importez un CSV (colonnes `prenom`, `nom`, `poste`, `tel`, `mail` — virgule ou point-virgule, en-têtes tolérants aux variantes) et générez en un ZIP les signatures HTML, cartes de visite PNG, badges nominatifs et **certificats de participation** (nom, événement, date, signataire) de toute une équipe. Les lignes incomplètes (nom et prénom manquants) sont signalées et ignorées sans bloquer le reste.
 - **Dossier de réunion complet** (onglet Documents types) : un bouton génère un ZIP combinant convocation, ordre du jour et feuille d'émargement à partir des mêmes champs (date, lieu, points, participants), quel que soit le type actuellement affiché à l'écran.
 - **Feuille d'émargement** : tableau Nom / Qualité / Signature généré à partir de la liste de participants, avec lignes vierges supplémentaires optionnelles ; se pagine automatiquement sur plusieurs feuilles A4 si la liste est longue.
-- **Invitation calendrier (.ics)** : sur les convocations, ordres du jour et feuilles d'émargement, un bouton génère un fichier `.ics` standard (date, heure, lieu) que les destinataires ajoutent à leur agenda en un clic — Outlook, Thunderbird/Lightning, Google Calendar, Apple Calendar.
+- **Invitation calendrier (.ics)** : sur les convocations, ordres du jour, feuilles d'émargement et procès-verbaux, un bouton génère un fichier `.ics` standard (date, heure, lieu) que les destinataires ajoutent à leur agenda en un clic — Outlook, Thunderbird/Lightning, Google Calendar, Apple Calendar.
 
 ### Exports avancés
 

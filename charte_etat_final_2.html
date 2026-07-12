@@ -857,7 +857,7 @@ Les personnels concernés sont invités à prendre connaissance des dispositions
 <!-- DOCUMENTS TYPES -->
 <div class="panel" id="panel-doctype">
 <div class="card">
-  <div class="card-title">Documents types — convocation · ordre du jour · attestation</div>
+  <div class="card-title">Documents types — convocation, arrêté, procès-verbal, mission, newsletter…</div>
   <div class="info fr-callout fr-callout--blue-ecume">Gabarits A4 conformes à la charte : bloc-marque en haut à gauche, titre du document en capitales, pied de page contacts. Choisissez le type de document, les champs s'adaptent.</div>
   <div class="g2">
     <div class="fg fr-input-group full"><label class="fr-label">Type de document</label>
@@ -866,6 +866,10 @@ Les personnels concernés sont invités à prendre connaissance des dispositions
         <option value="odj">Ordre du jour</option>
         <option value="attestation">Attestation</option>
         <option value="emargement">Feuille d'émargement</option>
+        <option value="arrete">Arrêté / décision</option>
+        <option value="pv">Procès-verbal de réunion</option>
+        <option value="mission">Ordre de mission</option>
+        <option value="newsletter">Newsletter / bulletin interne</option>
       </select>
     </div>
     <div class="fg fr-input-group"><label class="fr-label">Entité — ligne 1</label><input class="fr-input" id="dt-l1" value="ACADÉMIE" oninput="renderDoctype()"/></div>
@@ -885,6 +889,30 @@ Questions diverses</textarea></div>
 MARTIN Jean, Professeur
 BERNARD Sophie, CPE</textarea></div>
     <div class="fg fr-input-group" id="g-dt-vierges"><label class="fr-label">Lignes vierges supplémentaires</label><input class="fr-input" type="number" min="0" id="dt-vierges" value="5" oninput="renderDoctype()"/></div>
+    <div class="fg fr-input-group" id="g-dt-numero"><label class="fr-label">N° de l'arrêté (optionnel)</label><input class="fr-input" id="dt-numero" value="" oninput="renderDoctype()" placeholder="2026-014"/></div>
+    <div class="fg fr-input-group full" id="g-dt-visas"><label class="fr-label">Visas — « Vu … » (un par ligne, sans le mot « Vu » ni virgule finale)</label><textarea class="fr-input" id="dt-visas" rows="4" oninput="renderDoctype()">le code de l'éducation
+la loi n° 83-634 du 13 juillet 1983 modifiée portant droits et obligations des fonctionnaires
+l'avis du conseil d'administration en date du [date]</textarea></div>
+    <div class="fg fr-input-group full" id="g-dt-considerants"><label class="fr-label">Considérants (optionnel — un par ligne, sans le mot « Considérant » ni virgule finale)</label><textarea class="fr-input" id="dt-considerants" rows="3" oninput="renderDoctype()">que l'organisation du service nécessite les dispositions suivantes</textarea></div>
+    <div class="fg fr-input-group full" id="g-dt-articles"><label class="fr-label">Articles (un par ligne — numérotés automatiquement)</label><textarea class="fr-input" id="dt-articles" rows="4" oninput="renderDoctype()">Les dispositions suivantes sont adoptées à compter de la date du présent arrêté.
+Le présent arrêté sera notifié aux personnels concernés et publié selon les modalités en vigueur.
+Le secrétariat général est chargé de l'exécution du présent arrêté.</textarea></div>
+    <div class="fg fr-input-group full" id="g-dt-presents"><label class="fr-label">Présents (un par ligne)</label><textarea class="fr-input" id="dt-presents" rows="3" oninput="renderDoctype()">DUPONT Marie, Principale adjointe
+MARTIN Jean, Professeur
+BERNARD Sophie, CPE</textarea></div>
+    <div class="fg fr-input-group full" id="g-dt-absents"><label class="fr-label">Absents / excusés (optionnel, un par ligne)</label><textarea class="fr-input" id="dt-absents" rows="2" oninput="renderDoctype()"></textarea></div>
+    <div class="fg fr-input-group full" id="g-dt-agent"><label class="fr-label">Agent en mission (nom, fonction)</label><input class="fr-input" id="dt-agent" value="MARTIN Jean, Professeur" oninput="renderDoctype()"/></div>
+    <div class="fg fr-input-group full" id="g-dt-destination"><label class="fr-label">Destination</label><input class="fr-input" id="dt-destination" value="Paris" oninput="renderDoctype()"/></div>
+    <div class="fg fr-input-group" id="g-dt-dates-mission"><label class="fr-label">Dates de la mission</label><input class="fr-input" id="dt-dates-mission" value="du 12 au 13 mars 2026" oninput="renderDoctype()"/></div>
+    <div class="fg fr-input-group" id="g-dt-transport"><label class="fr-label">Moyen de transport (optionnel)</label><input class="fr-input" id="dt-transport" value="Train" oninput="renderDoctype()"/></div>
+    <div class="fg fr-input-group full" id="g-dt-sections"><label class="fr-label">Sections du bulletin — « ## Titre » pour commencer une section</label><textarea class="fr-input" id="dt-sections" rows="8" oninput="renderDoctype()">## Actualités du mois
+Texte de la section actualités. Décrivez ici les temps forts du mois écoulé.
+
+## Ressources humaines
+Informations relatives aux mouvements de personnel, recrutements, formations.
+
+## Agenda
+Dates et événements à venir pour le mois prochain.</textarea></div>
     <div class="fg fr-input-group full" id="g-dt-body"><label class="fr-label">Corps du document</label><textarea class="fr-input" id="dt-body" rows="5" oninput="renderDoctype()">J'ai l'honneur de vous convoquer à la réunion dont l'objet, la date et le lieu sont précisés ci-dessus.
 
 En cas d'empêchement, merci d'en informer le secrétariat dans les meilleurs délais.</textarea></div>
@@ -917,7 +945,7 @@ En cas d'empêchement, merci d'en informer le secrétariat dans les meilleurs d�
 <div class="panel" id="panel-masse">
 <div class="card">
   <div class="card-title">Génération en masse — signatures et cartes de visite d'équipe</div>
-  <div class="info fr-callout fr-callout--blue-ecume">Importez ou collez un annuaire CSV (colonnes : prénom, nom, poste, tél, mél — séparateur virgule ou point-virgule) pour générer en un clic les signatures, cartes de visite et/ou badges nominatifs de toute une équipe, regroupés dans un fichier ZIP. Le vrai changement d'échelle pour une délégation qui gère 50 ou 200 agents, ou un colloque à badger.</div>
+  <div class="info fr-callout fr-callout--blue-ecume">Importez ou collez un annuaire CSV (colonnes : prénom, nom, poste, tél, mél — séparateur virgule ou point-virgule) pour générer en un clic les signatures, cartes de visite, badges nominatifs et/ou certificats de participation de toute une équipe, regroupés dans un fichier ZIP. Le vrai changement d'échelle pour une délégation qui gère 50 ou 200 agents, ou un colloque à badger et certifier.</div>
   <div class="g2">
     <div class="fg fr-input-group full"><label class="fr-label">Fichier CSV (optionnel)</label><input class="fr-input" id="csv-file" type="file" accept=".csv,text/csv" onchange="loadCSVFile(event)"/></div>
     <div class="fg fr-input-group full"><label class="fr-label">Données CSV (modifiable)</label><textarea class="fr-input" id="csv-data" rows="6" oninput="previewCSV()">prenom,nom,poste,tel,mail
@@ -929,11 +957,14 @@ Sophie,Bernard,CPE,05 49 00 00 02,sophie.bernard@ac-poitiers.fr</textarea></div>
     <div class="fg fr-input-group full"><label class="fr-label">Direction / Service</label><input class="fr-input" id="csv-dir" value="Collège Jean Jaurès — Gençay" oninput="previewCSV()"/></div>
     <div class="fg fr-input-group full"><label class="fr-label">Adresse</label><input class="fr-input" id="csv-adr" value="1 rue de la République — 86160 Gençay" oninput="previewCSV()"/></div>
     <div class="fg fr-input-group full"><label class="fr-label">Site web (signatures)</label><input class="fr-input" id="csv-web" value="www.ac-poitiers.fr" oninput="previewCSV()"/></div>
-    <div class="fg fr-input-group full"><label class="fr-label">Nom de l'événement (badges, optionnel)</label><input class="fr-input" id="csv-event" value="Journée portes ouvertes 2026" oninput="previewCSV()"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label">Nom de l'événement (badges / certificats, optionnel)</label><input class="fr-input" id="csv-event" value="Journée portes ouvertes 2026" oninput="previewCSV()"/></div>
+    <div class="fg fr-input-group"><label class="fr-label">Date de l'événement (certificats, optionnel)</label><input class="fr-input" id="csv-event-date" value="14 mars 2026" oninput="previewCSV()"/></div>
+    <div class="fg fr-input-group"><label class="fr-label">Signataire du certificat (optionnel)</label><input class="fr-input" id="csv-signataire" value="La Rectrice" oninput="previewCSV()"/></div>
     <div class="fg fr-input-group full"><label class="fr-label" style="display:flex;gap:20px;text-transform:none;letter-spacing:0;flex-wrap:wrap;">
       <span style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="csv-gen-sig" checked style="width:auto;margin:0;"/> Signatures (HTML)</span>
       <span style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="csv-gen-cv" checked style="width:auto;margin:0;"/> Cartes de visite (PNG)</span>
       <span style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="csv-gen-badge" style="width:auto;margin:0;"/> Badges nominatifs (PNG)</span>
+      <span style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="csv-gen-cert" style="width:auto;margin:0;"/> Certificats de participation (PNG)</span>
     </label></div>
   </div>
   <div class="plabel">Aperçu des données</div>
@@ -1523,6 +1554,22 @@ function renderCP() {
 </div>`;
 }
 
+function buildCertificateHTML(d) {
+  const p = PICTO.color.sm;
+  const pw = Math.round(p.w * DOC_BLOC_SCALE * 1.1), ph = Math.round(p.h * DOC_BLOC_SCALE * 1.1);
+  return `
+<div style="width:1000px;height:700px;background:#fff;border:14px solid ${BLEU};box-sizing:border-box;padding:50px 70px;text-align:center;font-family:Marianne,Arial,sans-serif;position:relative;">
+  <img src="${p.uri}" width="${pw}" height="${ph}" style="display:block;margin:0 auto;"/>
+  <div style="margin-top:22px;${M_BOLD}font-size:32px;color:${BLEU};letter-spacing:.1em;">CERTIFICAT DE PARTICIPATION</div>
+  <div style="margin-top:44px;${M_REG}font-size:15px;color:#333;">Le présent certificat est délivré à</div>
+  <div style="margin-top:14px;${M_BOLD}font-size:28px;color:${NOIR};">${esc(d.pre)} ${esc(d.nom)}</div>
+  <div style="margin-top:22px;${M_REG}font-size:14px;color:#333;line-height:1.7;max-width:720px;margin-left:auto;margin-right:auto;">pour sa participation à<br/><span style="${M_BOLD}">${esc(d.event)}</span>${d.eventDate?` le ${esc(d.eventDate)}`:''}</div>
+  <div style="position:absolute;left:70px;right:70px;bottom:50px;display:flex;justify-content:space-between;align-items:flex-end;">
+    <div style="text-align:left;${M_REG}font-size:11px;color:#666;">${esc(d.l1)} ${esc(d.l2)}${d.dir?' — '+esc(d.dir):''}</div>
+    ${d.signataire?`<div style="text-align:right;${M_REG}font-size:12px;color:${NOIR};"><div style="border-top:1px solid #999;padding-top:6px;">${esc(d.signataire)}</div></div>`:''}
+  </div>
+</div>`;
+}
 function buildBadgeHTML(d) {
   const p = PICTO.color.sm;
   const pw = Math.round(p.w * DOC_BLOC_SCALE * 0.8), ph = Math.round(p.h * DOC_BLOC_SCALE * 0.8);
@@ -1805,11 +1852,41 @@ function qrMatrix(text, forceVer) {
 }
 
 // ── Documents types : convocation, ordre du jour, attestation ─────
-const DT_TITLES = {convocation:'CONVOCATION', odj:'ORDRE DU JOUR', attestation:'ATTESTATION'};
+const DT_TITLES = {convocation:'CONVOCATION', odj:'ORDRE DU JOUR', attestation:'ATTESTATION', arrete:'ARRÊTÉ', pv:'PROCÈS-VERBAL DE RÉUNION', mission:'ORDRE DE MISSION', newsletter:"BULLETIN D'INFORMATION"};
 const DT_BODY_DEFAULTS = {
   convocation: "J'ai l'honneur de vous convoquer à la réunion dont l'objet, la date et le lieu sont précisés ci-dessus.\n\nEn cas d'empêchement, merci d'en informer le secrétariat dans les meilleurs délais.",
-  attestation: "atteste que [Prénom NOM], [qualité], exerce ses fonctions au sein de l'établissement depuis le [date].\n\nLa présente attestation est délivrée à la demande de l'intéressé(e) pour servir et valoir ce que de droit."
+  attestation: "atteste que [Prénom NOM], [qualité], exerce ses fonctions au sein de l'établissement depuis le [date].\n\nLa présente attestation est délivrée à la demande de l'intéressé(e) pour servir et valoir ce que de droit.",
+  pv: "La séance est ouverte par le président de séance.\n\nAprès examen des points à l'ordre du jour, les décisions suivantes ont été actées :\n\nLa séance est levée."
 };
+// ── Pagination générique par blocs (arrêté, PV, mission, newsletter) ──
+function paginateBlocks(blocks, capFirst, capNext, width) {
+  const meas = document.createElement('div');
+  meas.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;width:' + width + 'px;';
+  document.body.appendChild(meas);
+  const hOf = arr => { meas.innerHTML = arr.join(''); return meas.offsetHeight; };
+  const pages = []; let cur = [];
+  const cap = () => pages.length === 0 ? capFirst : capNext;
+  blocks.forEach(b => {
+    if (cur.length && hOf(cur.concat(b)) > cap()) { pages.push(cur); cur = [b]; } else cur.push(b);
+  });
+  if (cur.length || !pages.length) pages.push(cur);
+  meas.remove();
+  return pages;
+}
+function buildFlowingPages(titleText, blocks, headBloc, footer) {
+  const pages = paginateBlocks(blocks, 470, 673, 470);
+  const total = pages.length;
+  return pages.map((blockList, i) => {
+    const first = i === 0;
+    const pn = total > 1 ? `<div style="position:absolute;right:45px;bottom:18px;${M_REG}font-size:7.5px;color:#555;">Page ${i+1}/${total}</div>` : '';
+    const titleBloc = first
+      ? `<div style="position:absolute;left:45px;right:45px;top:215px;text-align:center;${M_BOLD}font-size:16px;letter-spacing:.12em;color:${BLEU};">${titleText}</div>
+         <div style="position:absolute;left:180px;right:180px;top:242px;border-top:1.5px solid ${ROUGE};"></div>`
+      : `<div style="position:absolute;left:45px;right:45px;top:40px;${M_BOLD}font-size:11px;color:${BLEU};">${titleText} (suite)</div>`;
+    const contentTop = first ? 268 : 65;
+    return `<div class="courrier-page" style="position:relative;width:560px;height:792px;background:#fff;color:#1a1a1a;${M_REG}overflow:hidden;">${first?headBloc:''}${titleBloc}<div style="position:absolute;left:45px;right:45px;top:${contentTop}px;">${blockList.join('')}</div>${footer}${pn}</div>`;
+  });
+}
 function buildDoctypePages(type) {
   const l1=v('dt-l1'), l2=v('dt-l2'), dir=v('dt-dir'), emit=v('dt-emit');
   const dest=v('dt-dest'), obj=v('dt-obj'), heure=v('dt-heure'), lieu=v('dt-lieu');
@@ -1875,6 +1952,83 @@ function buildDoctypePages(type) {
     });
   }
 
+  if (type === 'arrete') {
+    const numero=v('dt-numero'), visas=v('dt-visas'), considerants=v('dt-considerants'), articles=v('dt-articles');
+    const blocks=[];
+    if (obj) blocks.push(`<div style="${M_BOLD}font-size:11px;font-style:italic;margin-bottom:16px;text-align:center;">${esc(obj)}</div>`);
+    visas.split('\n').map(s=>s.trim()).filter(Boolean).forEach(t => {
+      blocks.push(`<div style="${M_REG}font-size:10px;line-height:1.55;margin-bottom:7px;text-align:justify;">Vu ${esc(t)},</div>`);
+    });
+    considerants.split('\n').map(s=>s.trim()).filter(Boolean).forEach(t => {
+      blocks.push(`<div style="${M_REG}font-size:10px;line-height:1.55;margin-bottom:7px;text-align:justify;">Considérant ${esc(t)},</div>`);
+    });
+    blocks.push(`<div style="${M_BOLD}font-size:11.5px;text-align:center;margin:20px 0;letter-spacing:.1em;">ARRÊTE&nbsp;:</div>`);
+    articles.split('\n').map(s=>s.trim()).filter(Boolean).forEach((t,i) => {
+      const num=i===0?'1er':String(i+1);
+      blocks.push(`<div style="${M_REG}font-size:10.2px;line-height:1.5;margin-bottom:11px;text-align:justify;"><span style="${M_BOLD}">Article ${num}</span> — ${esc(t)}</div>`);
+    });
+    blocks.push(`<div style="margin-top:26px;text-align:right;${M_REG}font-size:10px;">Fait à ${esc(ville)}, le ${esc(dsCourt)}</div><div style="margin-top:20px;text-align:right;${M_REG}font-size:10px;">${esc(sign)}</div><div style="margin-top:24px;text-align:right;${M_BOLD}font-size:10px;">${esc(emitName)}</div>`);
+    const titleText = numero ? `ARRÊTÉ N° ${esc(numero)}` : 'ARRÊTÉ';
+    return buildFlowingPages(titleText, blocks, headBloc, footer);
+  }
+
+  if (type === 'pv') {
+    const presents=v('dt-presents'), absents=v('dt-absents');
+    const blocks=[];
+    blocks.push(`<div style="${M_REG}font-size:10px;line-height:1.6;margin-bottom:14px;">${esc(dsLong)}${heure?` à ${esc(heure)}`:''}${lieu?` — ${esc(lieu)}`:''}</div>`);
+    if (presents.trim()) {
+      const names=presents.split('\n').map(s=>s.trim()).filter(Boolean);
+      blocks.push(`<div style="${M_BOLD}font-size:10px;margin-bottom:4px;">Présents&nbsp;:</div><div style="${M_REG}font-size:10px;line-height:1.6;margin-bottom:12px;">${names.map(n=>esc(n)).join(', ')}</div>`);
+    }
+    if (absents.trim()) {
+      const names=absents.split('\n').map(s=>s.trim()).filter(Boolean);
+      blocks.push(`<div style="${M_BOLD}font-size:10px;margin-bottom:4px;">Absents / excusés&nbsp;:</div><div style="${M_REG}font-size:10px;line-height:1.6;margin-bottom:16px;">${names.map(n=>esc(n)).join(', ')}</div>`);
+    }
+    blocks.push(`<div style="${M_BOLD}font-size:11px;margin-bottom:10px;">Décisions et points abordés</div>`);
+    body.split('\n').forEach(par => {
+      if (par.trim()) blocks.push(`<div style="${M_REG}font-size:10.2px;line-height:1.55;margin-bottom:9px;text-align:justify;">${esc(par)}</div>`);
+      else blocks.push(`<div style="height:8px;"></div>`);
+    });
+    blocks.push(`<div style="margin-top:26px;text-align:right;${M_REG}font-size:10px;">${esc(sign)}</div><div style="margin-top:24px;text-align:right;${M_BOLD}font-size:10px;">${esc(emitName)}</div>`);
+    return buildFlowingPages(DT_TITLES.pv, blocks, headBloc, footer);
+  }
+
+  if (type === 'mission') {
+    const agent=v('dt-agent'), destination=v('dt-destination'), datesMission=v('dt-dates-mission'), transport=v('dt-transport');
+    const blocks=[];
+    blocks.push(`<div style="${M_BOLD}font-size:11.5px;text-align:center;margin-bottom:20px;letter-spacing:.1em;">DÉCIDE&nbsp;:</div>`);
+    const articlesList=[`${esc(agent)} est autorisé(e) à se rendre en mission à ${esc(destination)}${datesMission?`, ${esc(datesMission)}`:''}.`];
+    if (obj) articlesList.push(`Objet de la mission&nbsp;: ${esc(obj)}.`);
+    if (transport) articlesList.push(`Moyen de transport&nbsp;: ${esc(transport)}.`);
+    articlesList.push('Les frais de mission seront pris en charge dans les conditions réglementaires en vigueur.');
+    articlesList.forEach((t,i) => {
+      const num=i===0?'1er':String(i+1);
+      blocks.push(`<div style="${M_REG}font-size:10.2px;line-height:1.5;margin-bottom:11px;text-align:justify;"><span style="${M_BOLD}">Article ${num}</span> — ${t}</div>`);
+    });
+    blocks.push(`<div style="margin-top:26px;text-align:right;${M_REG}font-size:10px;">Fait à ${esc(ville)}, le ${esc(dsCourt)}</div><div style="margin-top:20px;text-align:right;${M_REG}font-size:10px;">${esc(sign)}</div><div style="margin-top:24px;text-align:right;${M_BOLD}font-size:10px;">${esc(emitName)}</div>`);
+    return buildFlowingPages(DT_TITLES.mission, blocks, headBloc, footer);
+  }
+
+  if (type === 'newsletter') {
+    const lines=v('dt-sections').split('\n');
+    const sections=[]; let cur=null;
+    lines.forEach(line => {
+      const m=line.match(/^##\s+(.*)/);
+      if (m) { cur={titre:m[1].trim(), body:[]}; sections.push(cur); }
+      else { if (!cur) { cur={titre:'', body:[]}; sections.push(cur); } cur.body.push(line); }
+    });
+    const blocks=[];
+    if (obj) blocks.push(`<div style="${M_REG}font-size:10px;color:#666;margin-bottom:16px;text-align:center;">${esc(obj)}</div>`);
+    sections.forEach(sec => {
+      if (sec.titre) blocks.push(`<div style="${M_BOLD}font-size:12.5px;color:${BLEU};margin:18px 0 8px;border-bottom:2px solid ${ROUGE};padding-bottom:4px;">${esc(sec.titre)}</div>`);
+      sec.body.forEach(l => {
+        if (l.trim()) blocks.push(`<div style="${M_REG}font-size:10.2px;line-height:1.55;margin-bottom:8px;text-align:justify;">${esc(l)}</div>`);
+        else blocks.push(`<div style="height:6px;"></div>`);
+      });
+    });
+    return buildFlowingPages(DT_TITLES.newsletter, blocks, headBloc, footer);
+  }
+
   let meta='', corps='';
   if (type==='convocation') {
     meta=`${dest?`<div style="${M_REG}font-size:10px;margin-bottom:12px;">${esc(dest)}</div>`:''}
@@ -1917,14 +2071,26 @@ function renderDoctype(typeChanged) {
   const show = (id, on) => { document.getElementById(id).style.display = on ? 'flex' : 'none'; };
   show('g-dt-dest',   type === 'convocation');
   show('g-dt-obj',    type !== 'attestation');
-  show('g-dt-heure',  type !== 'attestation');
-  show('g-dt-lieu',   type !== 'attestation');
+  const noMeta = ['attestation','arrete','mission','newsletter'];
+  show('g-dt-heure',  !noMeta.includes(type));
+  show('g-dt-lieu',   !noMeta.includes(type));
   show('g-dt-points', type === 'odj');
-  show('g-dt-body',   type !== 'odj' && type !== 'emargement');
-  show('g-dt-ville',  type === 'attestation');
+  show('g-dt-body',   !['odj','emargement','arrete','mission','newsletter'].includes(type));
+  show('g-dt-ville',  type === 'attestation' || type === 'arrete' || type === 'mission');
   show('g-dt-participants', type === 'emargement');
   show('g-dt-vierges', type === 'emargement');
-  document.getElementById('btn-ics').style.display = type !== 'attestation' ? 'inline-flex' : 'none';
+  show('g-dt-numero', type === 'arrete');
+  show('g-dt-visas', type === 'arrete');
+  show('g-dt-considerants', type === 'arrete');
+  show('g-dt-articles', type === 'arrete');
+  show('g-dt-presents', type === 'pv');
+  show('g-dt-absents', type === 'pv');
+  show('g-dt-agent', type === 'mission');
+  show('g-dt-destination', type === 'mission');
+  show('g-dt-dates-mission', type === 'mission');
+  show('g-dt-transport', type === 'mission');
+  show('g-dt-sections', type === 'newsletter');
+  document.getElementById('btn-ics').style.display = !['attestation','arrete','mission','newsletter'].includes(type) ? 'inline-flex' : 'none';
   if (typeChanged) {
     const bodyEl = document.getElementById('dt-body');
     const defs = Object.values(DT_BODY_DEFAULTS);
@@ -2045,9 +2211,10 @@ async function dlMassZip() {
   const genSig = document.getElementById('csv-gen-sig').checked;
   const genCV = document.getElementById('csv-gen-cv').checked;
   const genBadge = document.getElementById('csv-gen-badge').checked;
-  if (!genSig && !genCV && !genBadge) { toast('Cochez au moins un type de document à générer'); return; }
+  const genCert = document.getElementById('csv-gen-cert').checked;
+  if (!genSig && !genCV && !genBadge && !genCert) { toast('Cochez au moins un type de document à générer'); return; }
   const orgL1 = v('csv-l1'), orgL2 = v('csv-l2'), orgDir = v('csv-dir'), orgAdr = v('csv-adr'), orgWeb = v('csv-web');
-  const eventName = v('csv-event');
+  const eventName = v('csv-event'), eventDate = v('csv-event-date'), signataire = v('csv-signataire');
   toast('Génération en cours — ' + rows.length + ' personne(s)…');
   try {
     const entries = [];
@@ -2066,6 +2233,11 @@ async function dlMassZip() {
         const html = buildBadgeHTML({ e1: orgL1, e2: orgL2, pre: r.prenom, nom: r.nom.toUpperCase(), pos: r.poste, event: eventName });
         const bytes = await captureHTMLToPNGBytes(`<div style="display:inline-block;">${html}</div>`);
         entries.push({ name: 'badges/' + base + '.png', data: bytes });
+      }
+      if (genCert) {
+        const html = buildCertificateHTML({ pre: r.prenom, nom: r.nom.toUpperCase(), event: eventName, eventDate, signataire, l1: orgL1, l2: orgL2, dir: orgDir });
+        const bytes = await captureHTMLToPNGBytes(`<div style="display:inline-block;">${html}</div>`);
+        entries.push({ name: 'certificats/' + base + '.png', data: bytes });
       }
     }
     const zip = makeZip(entries);
