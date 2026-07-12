@@ -22,7 +22,7 @@ https://julientexier86.github.io/charte-graphique-etat-men/charte_etat_final_2.h
 | **Logo établissement** | Bloc-marque personnalisé (académie ou établissement) | PNG / HTML |
 | **Courrier officiel** | Gabarit dynamique A4 conforme p. 43, **pagination automatique multi-pages** | .docx / PNG par page / impression A4 |
 | **Réseaux sociaux** | Bannières Instagram (540×540), Twitter/X (960×540), Stories (1080×1920), **LinkedIn (1200×627), couverture Facebook (851×315), miniature YouTube (1280×720)** | PNG |
-| **Présentation** | Diapo couverture + contenu 16/9 ou A4 | PNG / **.pptx** |
+| **Présentation** | **Constructeur de diaporama** : couverture, contenu, chiffres clés, clôture — ajout/réorganisation/suppression de diapositives, 16/9 ou A4 | PNG (diapo ou ZIP) / **.pptx multi-diapositives** |
 | **Fond d'écran visio** | Arrière-plan Teams/Zoom 1920×1080 (styles bleu, blanc, split) | PNG |
 | **Documents types** | **Convocation · ordre du jour · attestation · feuille d'émargement** — gabarits A4 à champs adaptatifs, émargement paginé automatiquement, **invitation calendrier jointe** | .doc / PNG / impression A4 / HTML / **.ics** |
 | **Génération en masse** | Import CSV annuaire (prénom, nom, poste, tél, mél) → signatures, cartes de visite et **badges nominatifs** de toute une équipe | ZIP (HTML + PNG) |
@@ -93,15 +93,19 @@ L'interface utilise le **DSFR officiel v1.11.2** (`@gouvfr/dsfr`), embarqué dan
 
 ---
 
-## Export PPTX (onglet Présentation)
+## Constructeur de diaporama (onglet Présentation)
 
-Le bouton **Exporter .pptx** génère un fichier PowerPoint natif directement dans le navigateur, sans serveur :
+L'onglet Présentation est un véritable constructeur de diaporama, pas un export à la diapo :
 
-- Logo Marianne embarqué (PNG)
-- Mise en page identique à l'aperçu (colonne blanche 30 % / zone colorée 70 %)
-- Police Arial (compatible Office)
-- Format 16/9 (960×540 pt) ou A4
-- Slide couverture ou slide contenu
+- **Liste de diapositives** : ajouter, réordonner (↑ ↓) et supprimer des diapositives ; chaque diapositive a son propre éditeur de champs selon son type.
+- **Quatre types de diapositive** :
+  - **Couverture** — bloc-marque, titre, sous-titre, date/lieu.
+  - **Contenu** — en-tête institution, titre, texte à puces.
+  - **Chiffres clés** — 3 à 4 indicateurs (émoticône institutionnelle sérieuse 🎓 🏫 📈 👥 ✅ 📊 🌍 🤝 🔬 💼 🏛️ 📚 ⚖️ 🌱, chiffre, légende), format courant des rapports d'activité.
+  - **Clôture** — gabarit symétrique de la couverture (« Merci de votre attention » + message optionnel).
+- **Export .pptx multi-diapositives** : un seul fichier PowerPoint natif contenant toutes les diapositives dans l'ordre défini, généré directement dans le navigateur sans serveur (logo Marianne embarqué en PNG, police Arial compatible Office, format 16/9 ou A4).
+- **Export PNG** : la diapositive affichée, ou **toutes les diapositives d'un coup** en un ZIP.
+- Les diapositives sont sauvegardées automatiquement (localStorage) et incluses dans l'export/import de profil JSON.
 
 ---
 

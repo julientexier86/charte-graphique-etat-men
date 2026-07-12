@@ -766,14 +766,11 @@ Les personnels concernés sont invités à prendre connaissance des dispositions
 <div class="panel" id="panel-ppt">
 <div class="card">
   <div class="card-title">Présentation — gabarit diapo</div>
-  <div class="info fr-callout fr-callout--blue-ecume">Conforme charte SIG p. 42-43. Diapo de couverture avec fond coloré + bloc-marque + titre. Slide contenu avec entête institution. Export PNG.</div>
+  <div class="info fr-callout fr-callout--blue-ecume">Conforme charte SIG p. 42-43. Construisez votre diaporama diapositive par diapositive (couverture, contenu, chiffres clés, clôture) et exportez-le en un seul fichier .pptx.</div>
   <div class="g2">
     <div class="fg fr-input-group full"><label class="fr-label">Entité — ligne 1</label><input class="fr-input" id="ppt-l1" value="ACADÉMIE" oninput="renderPPT()"/></div>
     <div class="fg fr-input-group full"><label class="fr-label">Entité — ligne 2</label><input class="fr-input" id="ppt-l2" value="DE POITIERS" oninput="renderPPT()"/></div>
     <div class="fg fr-input-group full"><label class="fr-label">Direction / Service</label><input class="fr-input" id="ppt-dir" value="Direction de la formation" oninput="renderPPT()"/></div>
-    <div class="fg fr-input-group full"><label class="fr-label">Titre de la présentation</label><input class="fr-input" id="ppt-titre" value="Titre de la présentation" oninput="renderPPT()"/></div>
-    <div class="fg fr-input-group full"><label class="fr-label">Sous-titre</label><input class="fr-input" id="ppt-sub" value="Sous-titre ou contexte" oninput="renderPPT()"/></div>
-    <div class="fg fr-input-group"><label class="fr-label">Date / lieu</label><input class="fr-input" id="ppt-date" value="" oninput="renderPPT()" placeholder="ex : 23 mai 2026"/></div>
     <div class="fg fr-input-group"><label class="fr-label">Format</label>
       <select class="fr-select" id="ppt-fmt" onchange="renderPPT()">
         <option value="169">16/9 — 960×540px</option>
@@ -791,23 +788,27 @@ Les personnels concernés sont invités à prendre connaissance des dispositions
       </select>
       <div id="ppt-contrast" style="font-size:11px;margin-top:4px;"></div>
     </div>
-    <div class="fg fr-input-group"><label class="fr-label">Vue</label>
-      <select class="fr-select" id="ppt-vue" onchange="renderPPT()">
-        <option value="cover">Diapo couverture</option>
-        <option value="content">Slide contenu</option>
-      </select>
-    </div>
-    <div class="fg fr-input-group full"><label class="fr-label">Texte du slide contenu (optionnel)</label><textarea class="fr-input" id="ppt-body" rows="4" oninput="renderPPT()">• Point 1 de l'ordre du jour
-• Point 2 de l'ordre du jour
-• Point 3 de l'ordre du jour</textarea></div>
   </div>
-  <div class="plabel">Aperçu</div>
+  <div class="plabel">Diapositives du diaporama</div>
+  <div id="ppt-slides-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;"></div>
+  <div class="btns" style="margin-top:0;margin-bottom:16px;">
+    <select class="fr-select" id="ppt-new-type" style="width:auto;display:inline-block;">
+      <option value="cover">Couverture</option>
+      <option value="content">Contenu</option>
+      <option value="kpi">Chiffres clés</option>
+      <option value="closing">Clôture</option>
+    </select>
+    <button class="fr-btn fr-btn--sm fr-btn--secondary" onclick="pptAddSlide()">+ Ajouter une diapositive</button>
+  </div>
+  <div class="g2" id="ppt-slide-editor"></div>
+  <div class="plabel">Aperçu — diapositive sélectionnée</div>
   <div class="pbox" style="background:#888;justify-content:center;align-items:center;min-height:340px;">
     <div id="ppt-out" style="position:relative;overflow:hidden;flex:0 0 auto;box-shadow:0 2px 14px rgba(0,0,0,.3);"></div>
   </div>
   <div class="btns">
-    <button class="fr-btn fr-btn--sm" onclick="exportPNG('ppt-out','diapo')">⬇ Exporter PNG</button>
-    <button class="fr-btn fr-btn--sm" onclick="dlPPTX()" style="background:#21215A;">⬇ Exporter .pptx</button>
+    <button class="fr-btn fr-btn--sm" onclick="exportPNG('ppt-out','diapo')">⬇ Exporter PNG (diapo actuelle)</button>
+    <button class="fr-btn fr-btn--sm" onclick="dlPptAllPNG()" style="background:#E1000F;">⬇ Exporter tout en PNG (ZIP)</button>
+    <button class="fr-btn fr-btn--sm" onclick="dlPPTX()" style="background:#21215A;">⬇ Exporter .pptx (diaporama complet)</button>
     <button class="fr-btn fr-btn--sm fr-btn--secondary" onclick="copyHTMLClip('ppt-out')">⎘ Copier HTML</button>
   </div>
 </div>
@@ -2603,81 +2604,189 @@ function renderRS() {
 }
 
 // ── Présentation diapo (modèle Poitiers) ─────────────────────────
+// ── Diaporama : modèle de données et constructeur de diapositives ──
+const PPT_KPI_EMOJIS = ['🎓','🏫','📈','👥','✅','📊','🌍','🤝','🔬','💼','🏛️','📚','⚖️','🌱'];
+const PPT_SLIDE_LABELS = { cover:'Couverture', content:'Contenu', kpi:'Chiffres clés', closing:'Clôture' };
+let pptSlides = [
+  { type:'cover', titre:'Titre de la présentation', sub:'Sous-titre ou contexte', date:'' },
+  { type:'content', titre:'Diapositive de contenu', body:"• Point 1 de l'ordre du jour\n• Point 2 de l'ordre du jour\n• Point 3 de l'ordre du jour" }
+];
+let pptCurrent = 0;
+
+function pptDefaultSlide(type) {
+  if (type === 'cover') return { type, titre:'Titre de la présentation', sub:'Sous-titre ou contexte', date:'' };
+  if (type === 'content') return { type, titre:'Diapositive de contenu', body:'• Point 1\n• Point 2\n• Point 3' };
+  if (type === 'kpi') return { type, titre:'Chiffres clés', items:[
+    { emoji:'🎓', chiffre:'12 500', legende:'élèves scolarisés' },
+    { emoji:'🏫', chiffre:'48', legende:'établissements' },
+    { emoji:'✅', chiffre:'94 %', legende:'taux de réussite' }
+  ]};
+  return { type:'closing', titre:'Merci de votre attention', message:'' };
+}
+function renderPptSlideList() {
+  const el = document.getElementById('ppt-slides-list');
+  el.innerHTML = pptSlides.map((s, i) => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border:1px solid ${i===pptCurrent?BLEU:'#ddd'};background:${i===pptCurrent?'#E8EDFF':'#fff'};cursor:pointer;" onclick="pptSelectSlide(${i})">
+      <span style="font-size:13px;font-weight:${i===pptCurrent?700:400};color:${i===pptCurrent?BLEU:'#1a1a1a'};">${i+1}. ${PPT_SLIDE_LABELS[s.type]}${s.titre?' — '+esc(s.titre):''}</span>
+      <span style="display:flex;gap:4px;" onclick="event.stopPropagation()">
+        <button class="fr-btn fr-btn--sm fr-btn--secondary" style="padding:2px 8px;" onclick="pptMoveSlide(${i},-1)" ${i===0?'disabled':''}>↑</button>
+        <button class="fr-btn fr-btn--sm fr-btn--secondary" style="padding:2px 8px;" onclick="pptMoveSlide(${i},1)" ${i===pptSlides.length-1?'disabled':''}>↓</button>
+        <button class="fr-btn fr-btn--sm fr-btn--secondary" style="padding:2px 8px;" onclick="pptDeleteSlide(${i})" ${pptSlides.length<=1?'disabled':''}>🗑</button>
+      </span>
+    </div>`).join('');
+}
+function renderPptEditor() {
+  const s = pptSlides[pptCurrent];
+  const el = document.getElementById('ppt-slide-editor');
+  if (s.type === 'cover' || s.type === 'closing') {
+    const subLabel = s.type === 'closing' ? 'Message (optionnel)' : 'Sous-titre';
+    const subKey = s.type === 'closing' ? 'message' : 'sub';
+    el.innerHTML = `
+      <div class="fg fr-input-group full"><label class="fr-label">Titre</label><input class="fr-input" value="${esc(s.titre||'')}" oninput="pptUpdateField('titre', this.value)"/></div>
+      <div class="fg fr-input-group full"><label class="fr-label">${subLabel}</label><input class="fr-input" value="${esc(s[subKey]||'')}" oninput="pptUpdateField('${subKey}', this.value)"/></div>
+      ${s.type==='cover'?`<div class="fg fr-input-group"><label class="fr-label">Date / lieu</label><input class="fr-input" value="${esc(s.date||'')}" oninput="pptUpdateField('date', this.value)"/></div>`:''}`;
+  } else if (s.type === 'content') {
+    el.innerHTML = `
+      <div class="fg fr-input-group full"><label class="fr-label">Titre</label><input class="fr-input" value="${esc(s.titre||'')}" oninput="pptUpdateField('titre', this.value)"/></div>
+      <div class="fg fr-input-group full"><label class="fr-label">Texte (un point par ligne)</label><textarea class="fr-input" rows="5" oninput="pptUpdateField('body', this.value)">${esc(s.body||'')}</textarea></div>`;
+  } else if (s.type === 'kpi') {
+    const itemsHtml = s.items.map((it, i) => `
+      <div class="fg fr-input-group full" style="border-top:1px solid #eee;padding-top:10px;">
+        <label class="fr-label">Indicateur ${i+1}</label>
+        <div style="display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;">
+          <select class="fr-select" style="width:auto;" onchange="pptUpdateKpiItem(${i},'emoji',this.value)">
+            ${PPT_KPI_EMOJIS.map(em => `<option value="${em}"${em===it.emoji?' selected':''}>${em}</option>`).join('')}
+          </select>
+          <input class="fr-input" style="width:110px;" placeholder="Chiffre" value="${esc(it.chiffre)}" oninput="pptUpdateKpiItem(${i},'chiffre',this.value)"/>
+          <input class="fr-input" style="flex:1;min-width:160px;" placeholder="Légende" value="${esc(it.legende)}" oninput="pptUpdateKpiItem(${i},'legende',this.value)"/>
+          ${s.items.length>1?`<button class="fr-btn fr-btn--sm fr-btn--secondary" onclick="pptRemoveKpiItem(${i})">Retirer</button>`:''}
+        </div>
+      </div>`).join('');
+    el.innerHTML = `
+      <div class="fg fr-input-group full"><label class="fr-label">Titre</label><input class="fr-input" value="${esc(s.titre||'')}" oninput="pptUpdateField('titre', this.value)"/></div>
+      ${itemsHtml}
+      ${s.items.length<4?`<button class="fr-btn fr-btn--sm fr-btn--secondary full" style="margin-top:8px;" onclick="pptAddKpiItem()">+ Ajouter un indicateur</button>`:''}`;
+  }
+}
+function pptUpdateField(key, value) { pptSlides[pptCurrent][key] = value; renderPPT(); renderPptSlideList(); }
+function pptUpdateKpiItem(i, key, value) { pptSlides[pptCurrent].items[i][key] = value; renderPPT(); }
+function pptAddKpiItem() {
+  const s = pptSlides[pptCurrent];
+  if (s.items.length >= 4) return;
+  s.items.push({ emoji:'📊', chiffre:'0', legende:'Légende' });
+  renderPptEditor(); renderPPT();
+}
+function pptRemoveKpiItem(i) {
+  const s = pptSlides[pptCurrent];
+  if (s.items.length <= 1) return;
+  s.items.splice(i, 1);
+  renderPptEditor(); renderPPT();
+}
+function pptSelectSlide(i) { pptCurrent = i; renderPptEditor(); renderPPT(); renderPptSlideList(); }
+function pptAddSlide() {
+  const type = document.getElementById('ppt-new-type').value;
+  pptSlides.push(pptDefaultSlide(type));
+  pptCurrent = pptSlides.length - 1;
+  renderPptEditor(); renderPPT(); renderPptSlideList();
+}
+function pptDeleteSlide(i) {
+  if (pptSlides.length <= 1) return;
+  pptSlides.splice(i, 1);
+  if (pptCurrent >= pptSlides.length) pptCurrent = pptSlides.length - 1;
+  else if (pptCurrent > i) pptCurrent--;
+  renderPptEditor(); renderPPT(); renderPptSlideList();
+}
+function pptMoveSlide(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= pptSlides.length) return;
+  const tmp = pptSlides[i]; pptSlides[i] = pptSlides[j]; pptSlides[j] = tmp;
+  if (pptCurrent === i) pptCurrent = j; else if (pptCurrent === j) pptCurrent = i;
+  renderPptEditor(); renderPPT(); renderPptSlideList();
+}
+
+// ── Rendu HTML par type de diapositive (aperçu + export PNG) ───────
+function buildCoverHTML(titre, sub, dateTxt, l1, l2, dir, accent, W, H, pad, leftW, p) {
+  var pw=Math.round(p.w*DOC_BLOC_SCALE*1.3), ph=Math.round(p.h*DOC_BLOC_SCALE*1.3);
+  var iFS=Math.round(ph*0.72), dFS=Math.round(ph*0.46);
+  var titleFS=Math.round(W*0.048), subFS=Math.round(W*0.024), dateFS=Math.round(W*0.018), dirFS=Math.round(W*0.017);
+  var html='<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#fff;font-family:Marianne,Arial,sans-serif;overflow:hidden;">';
+  html+='<div style="position:absolute;left:'+leftW+'px;top:0;right:0;bottom:0;background:'+accent+';"></div>';
+  html+='<div style="position:absolute;left:'+(leftW-3)+'px;top:0;width:3px;height:100%;background:'+accent+';"></div>';
+  html+='<div style="position:absolute;left:'+pad+'px;top:'+Math.round(H*0.07)+'px;">';
+  html+='<img src="'+p.uri+'" width="'+pw+'" height="'+ph+'" style="display:block;">';
+  html+='<div style="color:#1a1a1a;font-weight:700;font-size:'+iFS+'px;line-height:1.05;margin-top:4px;">'+esc(l1)+'<br>'+esc(l2)+'</div>';
+  html+='<div style="color:#666;font-family:Spectral,Georgia,serif;font-style:italic;font-size:'+dFS+'px;line-height:1.4;">Liberté<br>Égalité<br>Fraternité</div>';
+  if(dir) html+='<div style="color:'+accent+';font-weight:700;font-size:'+dirFS+'px;margin-top:10px;line-height:1.3;">'+esc(dir)+'</div>';
+  html+='</div>';
+  var rPad=Math.round(W*0.04), rLeft=leftW+rPad, rTop=Math.round(H*0.30);
+  html+='<div style="position:absolute;left:'+rLeft+'px;right:'+rPad+'px;top:'+rTop+'px;">';
+  html+='<div style="color:#fff;font-weight:700;font-size:'+titleFS+'px;line-height:1.25;margin-bottom:'+Math.round(H*0.025)+'px;">'+esc(titre)+'</div>';
+  if(sub) html+='<div style="color:rgba(255,255,255,.85);font-size:'+subFS+'px;line-height:1.4;margin-bottom:'+Math.round(H*0.02)+'px;">'+esc(sub)+'</div>';
+  if(dateTxt) html+='<div style="color:rgba(255,255,255,.7);font-size:'+dateFS+'px;margin-top:'+Math.round(H*0.04)+'px;border-top:1px solid rgba(255,255,255,.3);padding-top:'+Math.round(H*0.015)+'px;">'+esc(dateTxt)+'</div>';
+  html+='</div>';
+  html+='<div style="position:absolute;left:0;right:0;bottom:0;height:'+Math.round(H*0.06)+'px;background:rgba(0,0,0,.08);display:flex;align-items:center;padding:0 '+pad+'px;box-sizing:border-box;">';
+  html+='<span style="font-size:'+Math.round(W*0.012)+'px;color:rgba(255,255,255,.6);">'+esc(l1)+' '+esc(l2)+'</span></div>';
+  html+='</div>';
+  return html;
+}
+function buildContentHTML(titre, body, l1, l2, dir, accent, W, H, pad, p) {
+  var pw=Math.round(p.w*DOC_BLOC_SCALE*1.3), ph=Math.round(p.h*DOC_BLOC_SCALE*1.3);
+  var iFS=Math.round(ph*0.72), dFS=Math.round(ph*0.46);
+  var entH=Math.round(H*0.16), titleFS2=Math.round(W*0.026), bodyFS=Math.round(W*0.020);
+  var bodyLines=(body||'').split('\n').map(function(l){
+    return l ? '<div style="margin:0 0 '+Math.round(bodyFS*0.55)+'px 0;">'+esc(l)+'</div>' : '<div style="height:'+Math.round(bodyFS*0.4)+'px;"></div>';
+  }).join('');
+  var html='<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#fff;font-family:Marianne,Arial,sans-serif;overflow:hidden;">';
+  html+='<div style="position:absolute;left:0;top:0;right:0;height:'+entH+'px;background:#fff;border-bottom:4px solid '+accent+';display:flex;align-items:center;justify-content:space-between;padding:0 '+pad+'px;box-sizing:border-box;">';
+  html+='<div style="display:flex;align-items:center;gap:8px;">';
+  html+='<img src="'+p.uri+'" width="'+pw+'" height="'+ph+'" style="display:block;flex:0 0 auto;">';
+  html+='<div><div style="color:#1a1a1a;font-weight:700;font-size:'+iFS+'px;line-height:1.05;">'+esc(l1)+'<br>'+esc(l2)+'</div>';
+  html+='<div style="color:#666;font-family:Spectral,Georgia,serif;font-style:italic;font-size:'+dFS+'px;line-height:1.3;">Liberté<br>Égalité<br>Fraternité</div></div></div>';
+  if(dir) html+='<div style="color:'+accent+';font-weight:700;font-size:'+Math.round(W*0.016)+'px;text-align:right;max-width:45%;">'+esc(dir)+'</div>';
+  html+='</div>';
+  html+='<div style="position:absolute;left:'+pad+'px;right:'+pad+'px;top:'+(entH+Math.round(H*0.04))+'px;color:'+accent+';font-weight:700;font-size:'+titleFS2+'px;padding-bottom:'+Math.round(H*0.015)+'px;border-bottom:1px solid #ddd;">'+esc(titre)+'</div>';
+  html+='<div style="position:absolute;left:'+pad+'px;right:'+pad+'px;top:'+(entH+Math.round(H*0.15))+'px;font-size:'+bodyFS+'px;line-height:1.6;color:#1a1a1a;">'+bodyLines+'</div>';
+  html+='<div style="position:absolute;left:0;right:0;bottom:0;height:'+Math.round(H*0.07)+'px;background:'+accent+';display:flex;align-items:center;justify-content:space-between;padding:0 '+pad+'px;box-sizing:border-box;">';
+  html+='<span style="color:rgba(255,255,255,.8);font-size:'+Math.round(W*0.012)+'px;">'+esc(l1)+' '+esc(l2)+'</span>';
+  html+='</div></div>';
+  return html;
+}
+function buildKpiHTML(titre, items, l1, l2, accent, W, H, pad, p) {
+  var pw=Math.round(p.w*DOC_BLOC_SCALE*1.1), ph=Math.round(p.h*DOC_BLOC_SCALE*1.1);
+  var iFS=Math.round(ph*0.72), entH=Math.round(H*0.16);
+  var n=items.length||1, gap=Math.round(W*0.02);
+  var boxW=Math.round((W-2*pad-(n-1)*gap)/n);
+  var itemsHtml=items.map(function(it){
+    return '<div style="width:'+boxW+'px;text-align:center;">'+
+      '<div style="font-size:'+Math.round(W*0.05)+'px;line-height:1;margin-bottom:8px;">'+esc(it.emoji)+'</div>'+
+      '<div style="font-weight:700;font-size:'+Math.round(W*0.036)+'px;color:'+accent+';line-height:1.1;">'+esc(it.chiffre)+'</div>'+
+      '<div style="font-size:'+Math.round(W*0.016)+'px;color:#555;margin-top:6px;line-height:1.3;">'+esc(it.legende)+'</div>'+
+    '</div>';
+  }).join('');
+  var html='<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#fff;font-family:Marianne,Arial,sans-serif;overflow:hidden;">';
+  html+='<div style="position:absolute;left:0;top:0;right:0;height:'+entH+'px;background:#fff;border-bottom:4px solid '+accent+';display:flex;align-items:center;padding:0 '+pad+'px;box-sizing:border-box;">';
+  html+='<img src="'+p.uri+'" width="'+pw+'" height="'+ph+'" style="display:block;">';
+  html+='<div style="margin-left:8px;font-weight:700;font-size:'+iFS+'px;color:#1a1a1a;line-height:1.05;">'+esc(l1)+'<br>'+esc(l2)+'</div>';
+  html+='</div>';
+  html+='<div style="position:absolute;left:'+pad+'px;right:'+pad+'px;top:'+Math.round(H*0.26)+'px;font-weight:700;font-size:'+Math.round(W*0.032)+'px;color:'+accent+';">'+esc(titre)+'</div>';
+  html+='<div style="position:absolute;left:'+pad+'px;right:'+pad+'px;top:'+Math.round(H*0.42)+'px;display:flex;justify-content:space-between;gap:'+gap+'px;">'+itemsHtml+'</div>';
+  html+='</div>';
+  return html;
+}
 function renderPPT() {
   var l1=v('ppt-l1'), l2=v('ppt-l2'), dir=v('ppt-dir');
-  var titre=v('ppt-titre'), sub=v('ppt-sub');
-  var dateTxt=v('ppt-date'), body=v('ppt-body');
-  var fmt=v('ppt-fmt'), vue=v('ppt-vue'), accent=v('ppt-accent');
+  var fmt=v('ppt-fmt'), accent=v('ppt-accent');
   var p=PICTO.color.sm;
   var W, H, scale;
   if (fmt==='169') { W=960; H=540; scale=0.55; }
   else             { W=794; H=1123; scale=0.46; }
-  var pw=Math.round(p.w*DOC_BLOC_SCALE*1.3);
-  var ph=Math.round(p.h*DOC_BLOC_SCALE*1.3);
-  var iFS=Math.round(ph*0.72);
-  var dFS=Math.round(ph*0.46);
   var pad=Math.round(W*0.055);
-  var html='';
-  if (vue==='cover') {
-    var leftW=Math.round(W*0.30);
-    var titleFS=Math.round(W*0.048);
-    var subFS=Math.round(W*0.024);
-    var dateFS=Math.round(W*0.018);
-    var dirFS=Math.round(W*0.017);
-    // Cover: white left column + colored right zone
-    html='<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#fff;font-family:Marianne,Arial,sans-serif;overflow:hidden;">';
-    // Right colored zone
-    html+='<div style="position:absolute;left:'+leftW+'px;top:0;right:0;bottom:0;background:'+accent+';"></div>';
-    // Thin vertical accent line
-    html+='<div style="position:absolute;left:'+(leftW-3)+'px;top:0;width:3px;height:100%;background:'+accent+';"></div>';
-    // Bloc-marque top left
-    html+='<div style="position:absolute;left:'+pad+'px;top:'+Math.round(H*0.07)+'px;">';
-    html+='<img src="'+p.uri+'" width="'+pw+'" height="'+ph+'" style="display:block;">';
-    html+='<div style="color:#1a1a1a;font-weight:700;font-size:'+iFS+'px;line-height:1.05;margin-top:4px;">'+esc(l1)+'<br>'+esc(l2)+'</div>';
-    html+='<div style="color:#666;font-family:Spectral,Georgia,serif;font-style:italic;font-size:'+dFS+'px;line-height:1.4;">Liberté<br>Égalité<br>Fraternité</div>';
-    if(dir) html+='<div style="color:'+accent+';font-weight:700;font-size:'+dirFS+'px;margin-top:10px;line-height:1.3;">'+esc(dir)+'</div>';
-    html+='</div>';
-    // Title/sub/date in right zone — vertically centered
-    var rPad=Math.round(W*0.04);
-    var rLeft=leftW+rPad;
-    var rTop=Math.round(H*0.30);
-    html+='<div style="position:absolute;left:'+rLeft+'px;right:'+rPad+'px;top:'+rTop+'px;">';
-    html+='<div style="color:#fff;font-weight:700;font-size:'+titleFS+'px;line-height:1.25;margin-bottom:'+Math.round(H*0.025)+'px;">'+esc(titre)+'</div>';
-    if(sub) html+='<div style="color:rgba(255,255,255,.85);font-size:'+subFS+'px;line-height:1.4;margin-bottom:'+Math.round(H*0.02)+'px;">'+esc(sub)+'</div>';
-    if(dateTxt) html+='<div style="color:rgba(255,255,255,.7);font-size:'+dateFS+'px;margin-top:'+Math.round(H*0.04)+'px;border-top:1px solid rgba(255,255,255,.3);padding-top:'+Math.round(H*0.015)+'px;">'+esc(dateTxt)+'</div>';
-    html+='</div>';
-    // Bottom footer bar
-    html+='<div style="position:absolute;left:0;right:0;bottom:0;height:'+Math.round(H*0.06)+'px;background:rgba(0,0,0,.08);display:flex;align-items:center;padding:0 '+pad+'px;box-sizing:border-box;">';
-    html+='<span style="font-size:'+Math.round(W*0.012)+'px;color:rgba(255,255,255,.6);">'+esc(l1)+' '+esc(l2)+'</span></div>';
-    html+='</div>';
-  } else {
-    // Content slide
-    var entH=Math.round(H*0.16);
-    var titleFS2=Math.round(W*0.026);
-    var bodyFS=Math.round(W*0.020);
-    var bodyLines=body.split('\n').map(function(l){
-      return l ? '<div style="margin:0 0 '+Math.round(bodyFS*0.55)+'px 0;">'+esc(l)+'</div>'
-               : '<div style="height:'+Math.round(bodyFS*0.4)+'px;"></div>';
-    }).join('');
-    html='<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#fff;font-family:Marianne,Arial,sans-serif;overflow:hidden;">';
-    // Header
-    html+='<div style="position:absolute;left:0;top:0;right:0;height:'+entH+'px;background:#fff;border-bottom:4px solid '+accent+';display:flex;align-items:center;justify-content:space-between;padding:0 '+pad+'px;box-sizing:border-box;">';
-    html+='<div style="display:flex;align-items:center;gap:8px;">';
-    html+='<img src="'+p.uri+'" width="'+pw+'" height="'+ph+'" style="display:block;flex:0 0 auto;">';
-    html+='<div><div style="color:#1a1a1a;font-weight:700;font-size:'+iFS+'px;line-height:1.05;">'+esc(l1)+'<br>'+esc(l2)+'</div>';
-    html+='<div style="color:#666;font-family:Spectral,Georgia,serif;font-style:italic;font-size:'+dFS+'px;line-height:1.3;">Liberté<br>Égalité<br>Fraternité</div></div></div>';
-    if(dir) html+='<div style="color:'+accent+';font-weight:700;font-size:'+Math.round(W*0.016)+'px;text-align:right;max-width:45%;">'+esc(dir)+'</div>';
-    html+='</div>';
-    // Title
-    html+='<div style="position:absolute;left:'+pad+'px;right:'+pad+'px;top:'+(entH+Math.round(H*0.04))+'px;color:'+accent+';font-weight:700;font-size:'+titleFS2+'px;padding-bottom:'+Math.round(H*0.015)+'px;border-bottom:1px solid #ddd;">'+esc(titre)+'</div>';
-    // Body
-    html+='<div style="position:absolute;left:'+pad+'px;right:'+pad+'px;top:'+(entH+Math.round(H*0.15))+'px;font-size:'+bodyFS+'px;line-height:1.6;color:#1a1a1a;">'+bodyLines+'</div>';
-    // Footer
-    html+='<div style="position:absolute;left:0;right:0;bottom:0;height:'+Math.round(H*0.07)+'px;background:'+accent+';display:flex;align-items:center;justify-content:space-between;padding:0 '+pad+'px;box-sizing:border-box;">';
-    html+='<span style="color:rgba(255,255,255,.8);font-size:'+Math.round(W*0.012)+'px;">'+esc(l1)+' '+esc(l2)+'</span>';
-    if(dateTxt) html+='<span style="color:rgba(255,255,255,.7);font-size:'+Math.round(W*0.012)+'px;">'+esc(dateTxt)+'</span>';
-    html+='</div></div>';
-  }
+  var leftW=Math.round(W*0.30);
+  var s=pptSlides[pptCurrent], html;
+  if (s.type==='cover') html=buildCoverHTML(s.titre,s.sub,s.date,l1,l2,dir,accent,W,H,pad,leftW,p);
+  else if (s.type==='closing') html=buildCoverHTML(s.titre,s.message,'',l1,l2,dir,accent,W,H,pad,leftW,p);
+  else if (s.type==='kpi') html=buildKpiHTML(s.titre,s.items,l1,l2,accent,W,H,pad,p);
+  else html=buildContentHTML(s.titre,s.body,l1,l2,dir,accent,W,H,pad,p);
   var out=document.getElementById('ppt-out');
   out.style.width=Math.round(W*scale)+'px';
   out.style.height=Math.round(H*scale)+'px';
@@ -2863,112 +2972,159 @@ function sldXml(shapes){
     '<a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>'+
     shapes+'</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>';
 }
+// ── Construction des formes PPTX par type de diapositive ────────────
+function buildCoverShapes(titre, sub, date, l1, l2, dir, aH, W, H, We, He, e, p, pad, leftW) {
+  var id=1, shapes='';
+  var pw=Math.round(p.w*DOC_BLOC_SCALE*1.3), ph=Math.round(p.h*DOC_BLOC_SCALE*1.3);
+  var iFS=px2pt(Math.round(ph*0.72)), dFS=px2pt(Math.round(ph*0.46));
+  var titleFS=px2pt(Math.round(W*0.048)), subFS=px2pt(Math.round(W*0.024));
+  var dirFS=px2pt(Math.round(W*0.017)), dateFS=px2pt(Math.round(W*0.018));
+  var rPad=Math.round(W*0.04), rLeft=leftW+rPad, rTop=Math.round(H*0.30);
+  shapes+=pSp(++id,'bg-w',0,0,e(leftW),He,'FFFFFF',false,null);
+  shapes+=pSp(++id,'bg-c',e(leftW),0,We-e(leftW),He,aH,false,null);
+  shapes+=pSp(++id,'sep',e(leftW-3),0,e(3),He,aH,false,null);
+  shapes+=pSp(++id,'ftr',0,He-e(Math.round(H*0.06)),We,e(Math.round(H*0.06)),'1A1A1A',false,
+    [{r:[{t:l1+(l2?' '+l2:''),sz:px2pt(Math.round(W*0.012)),b:0,c:'CCCCCC'}]}]);
+  shapes+=pPic(++id,'picto','rId2',e(pad),e(Math.round(H*0.07)),e(pw),e(ph));
+  var instParas=[
+    {r:[{t:l1,sz:iFS,b:1,c:'1A1A1A'}]},
+    {r:[{t:l2,sz:iFS,b:1,c:'1A1A1A'}]},
+    {r:[{t:'',sz:px2pt(4)}]},
+    {r:[{t:'Liberté',sz:dFS,b:0,i:1,c:'666666'}]},
+    {r:[{t:'Égalité',sz:dFS,b:0,i:1,c:'666666'}]},
+    {r:[{t:'Fraternité',sz:dFS,b:0,i:1,c:'666666'}]}
+  ];
+  if(dir) instParas=instParas.concat([{r:[{t:'',sz:px2pt(8)}]},{r:[{t:dir,sz:dirFS,b:1,c:aH}]}]);
+  shapes+=pSp(++id,'inst',e(pad),e(Math.round(H*0.07)+ph+4),e(leftW-2*pad),e(Math.round(H*0.55)),null,true,instParas);
+  if(date) shapes+=pSp(++id,'dt',e(pad),He-e(Math.round(H*0.18)),e(leftW-2*pad),e(Math.round(H*0.12)),null,true,[{r:[{t:date,sz:dateFS,b:0,c:'888888'}]}]);
+  shapes+=pSp(++id,'titre',e(rLeft),e(rTop),e(W-rLeft-rPad),e(Math.round(H*0.22)),null,true,[{r:[{t:titre,sz:titleFS,b:1,c:'FFFFFF'}]}],'ctr');
+  if(sub) shapes+=pSp(++id,'sub',e(rLeft),e(rTop+Math.round(H*0.24)),e(W-rLeft-rPad),e(Math.round(H*0.14)),null,true,[{r:[{t:sub,sz:subFS,b:0,c:'E0E0E0'}]}]);
+  if(date) shapes+=pSp(++id,'dt2',e(rLeft),He-e(Math.round(H*0.15)),e(W-rLeft-rPad),e(Math.round(H*0.10)),null,true,[{r:[{t:date,sz:dateFS,b:0,c:'CCCCCC'}]}]);
+  return shapes;
+}
+function buildContentShapes(titre, body, l1, l2, dir, aH, W, H, We, He, e, p, pad, leftW) {
+  var id=1, shapes='';
+  var pw=Math.round(p.w*DOC_BLOC_SCALE*1.3), ph=Math.round(p.h*DOC_BLOC_SCALE*1.3);
+  var entH=Math.round(H*0.16), footH=Math.round(H*0.07);
+  var titleFS2=px2pt(Math.round(W*0.026)), bodyFS=px2pt(Math.round(W*0.020));
+  var iFS2=px2pt(Math.round(ph*0.72));
+  shapes+=pSp(++id,'hdr-bg',0,0,We,e(entH),'FFFFFF',false,null);
+  shapes+=pSp(++id,'hdr-line',0,e(entH-3),We,e(3),aH,false,null);
+  shapes+=pSp(++id,'ftr',0,He-e(footH),We,e(footH),aH,false,null);
+  shapes+=pPic(++id,'picto','rId2',e(pad),e(Math.round((entH-ph)/2)),e(pw),e(ph));
+  shapes+=pSp(++id,'inst-h',e(pad+pw+8),e(Math.round((entH-Math.round(ph*0.8))/2)),e(leftW),e(e(ph)),null,true,[
+    {r:[{t:l1+(l2?' — '+l2:''),sz:iFS2,b:1,c:'1A1A1A'}]}
+  ]);
+  shapes+=pSp(++id,'titre',e(pad),e(entH+pad),We-e(2*pad),e(Math.round(H*0.14)),null,true,[{r:[{t:titre,sz:titleFS2,b:1,c:aH}]}]);
+  var bParas=(body||'').split('\n').map(function(line){return {r:[{t:line,sz:bodyFS,b:0,c:'1A1A1A'}]};});
+  if(!bParas.length)bParas=[{r:[{t:'',sz:bodyFS}]}];
+  shapes+=pSp(++id,'body',e(pad),e(entH+pad+Math.round(H*0.16)),We-e(2*pad),He-e(entH+footH+2*pad+Math.round(H*0.16)),null,true,bParas);
+  return shapes;
+}
+function buildKpiShapes(titre, items, l1, l2, aH, W, H, We, He, e, p, pad) {
+  var id=1, shapes='';
+  var pw=Math.round(p.w*DOC_BLOC_SCALE*1.1), ph=Math.round(p.h*DOC_BLOC_SCALE*1.1);
+  var entH=Math.round(H*0.16);
+  var iFS2=px2pt(Math.round(ph*0.72));
+  var titleFS=px2pt(Math.round(W*0.032));
+  var emojiFS=px2pt(Math.round(W*0.05));
+  var chiffreFS=px2pt(Math.round(W*0.036));
+  var legendeFS=px2pt(Math.round(W*0.016));
+  shapes+=pSp(++id,'hdr-bg',0,0,We,e(entH),'FFFFFF',false,null);
+  shapes+=pSp(++id,'hdr-line',0,e(entH-3),We,e(3),aH,false,null);
+  shapes+=pPic(++id,'picto','rId2',e(pad),e(Math.round((entH-ph)/2)),e(pw),e(ph));
+  shapes+=pSp(++id,'inst-h',e(pad+pw+8),e(Math.round((entH-Math.round(ph*0.8))/2)),e(Math.round(W*0.4)),e(ph),null,true,[
+    {r:[{t:l1+(l2?' — '+l2:''),sz:iFS2,b:1,c:'1A1A1A'}]}
+  ]);
+  shapes+=pSp(++id,'titre',e(pad),e(Math.round(H*0.26)),We-e(2*pad),e(Math.round(H*0.10)),null,true,[{r:[{t:titre,sz:titleFS,b:1,c:aH}]}]);
+  var n=items.length, gap=Math.round(W*0.02);
+  var boxW=Math.round((W-2*pad-(n-1)*gap)/n);
+  var boxTop=Math.round(H*0.42);
+  items.forEach(function(it, i){
+    var x=pad+i*(boxW+gap);
+    shapes+=pSp(++id,'emoji'+i,e(x),e(boxTop),e(boxW),e(Math.round(H*0.14)),null,true,[{a:'ctr',r:[{t:it.emoji,sz:emojiFS}]}],'ctr');
+    shapes+=pSp(++id,'chiffre'+i,e(x),e(boxTop+Math.round(H*0.16)),e(boxW),e(Math.round(H*0.12)),null,true,[{a:'ctr',r:[{t:it.chiffre,sz:chiffreFS,b:1,c:aH}]}],'ctr');
+    shapes+=pSp(++id,'legende'+i,e(x),e(boxTop+Math.round(H*0.30)),e(boxW),e(Math.round(H*0.16)),null,true,[{a:'ctr',r:[{t:it.legende,sz:legendeFS,b:0,c:'555555'}]}],'ctr');
+  });
+  return shapes;
+}
 function dlPPTX() {
   var l1=v('ppt-l1'),l2=v('ppt-l2'),dir=v('ppt-dir');
-  var titre=v('ppt-titre'),sub=v('ppt-sub'),date=v('ppt-date');
-  var fmt=v('ppt-fmt'),accent=v('ppt-accent'),vue=v('ppt-vue'),body=v('ppt-body');
+  var fmt=v('ppt-fmt'),accent=v('ppt-accent');
   var isA4=(fmt==='a4');
-  // Slide pixel dimensions (same as renderPPT)
   var W=isA4?794:960, H=isA4?1123:540;
-  // EMU dimensions
   var We=isA4?8229600:9144000, He=isA4?5822856:5143500;
   var aH=accent.replace('#','').toUpperCase();
   var p=PICTO.color.sm;
-  var pw=Math.round(p.w*DOC_BLOC_SCALE*1.3);
-  var ph=Math.round(p.h*DOC_BLOC_SCALE*1.3);
+  var pictoBytes=dataUriBytes(p.uri);
   var pad=Math.round(W*0.055);
   var leftW=Math.round(W*0.30);
-  var id=1, shapes='';
-  // Picto PNG bytes
-  var pictoBytes=dataUriBytes(p.uri);
-  // EMU scale: 1px = We/W EMU
   var sc=We/W;
   function e(px){return Math.round(px*sc);}
 
-  if(vue==='cover'){
-    var iFS=px2pt(Math.round(ph*0.72));
-    var dFS=px2pt(Math.round(ph*0.46));
-    var titleFS=px2pt(Math.round(W*0.048));
-    var subFS=px2pt(Math.round(W*0.024));
-    var dirFS=px2pt(Math.round(W*0.017));
-    var dateFS=px2pt(Math.round(W*0.018));
-    var rPad=Math.round(W*0.04);
-    var rLeft=leftW+rPad;
-    var rTop=Math.round(H*0.30);
-    // Backgrounds
-    shapes+=pSp(++id,'bg-w',0,0,e(leftW),He,'FFFFFF',false,null);
-    shapes+=pSp(++id,'bg-c',e(leftW),0,We-e(leftW),He,aH,false,null);
-    // Separator line
-    shapes+=pSp(++id,'sep',e(leftW-3),0,e(3),He,aH,false,null);
-    // Footer bar (semi-transparent via dark overlay approach: use rgba-like dark color)
-    shapes+=pSp(++id,'ftr',0,He-e(Math.round(H*0.06)),We,e(Math.round(H*0.06)),'1A1A1A',false,
-      [{r:[{t:l1+(l2?' '+l2:''),sz:px2pt(Math.round(W*0.012)),b:0,c:'CCCCCC'}]}]);
-    // Picto
-    shapes+=pPic(++id,'picto','rId2',e(pad),e(Math.round(H*0.07)),e(pw),e(ph));
-    // Institution text
-    var instParas=[
-      {r:[{t:l1,sz:iFS,b:1,c:'1A1A1A'}]},
-      {r:[{t:l2,sz:iFS,b:1,c:'1A1A1A'}]},
-      {r:[{t:'',sz:px2pt(4)}]},
-      {r:[{t:'Liberté',sz:dFS,b:0,i:1,c:'666666'}]},
-      {r:[{t:'Égalité',sz:dFS,b:0,i:1,c:'666666'}]},
-      {r:[{t:'Fraternité',sz:dFS,b:0,i:1,c:'666666'}]}
-    ];
-    if(dir) instParas=instParas.concat([{r:[{t:'',sz:px2pt(8)}]},{r:[{t:dir,sz:dirFS,b:1,c:aH}]}]);
-    shapes+=pSp(++id,'inst',e(pad),e(Math.round(H*0.07)+ph+4),e(leftW-2*pad),e(Math.round(H*0.55)),null,true,instParas);
-    if(date) shapes+=pSp(++id,'dt',e(pad),He-e(Math.round(H*0.18)),e(leftW-2*pad),e(Math.round(H*0.12)),null,true,[{r:[{t:date,sz:dateFS,b:0,c:'888888'}]}]);
-    // Right zone text
-    shapes+=pSp(++id,'titre',e(rLeft),e(rTop),e(W-rLeft-rPad),e(Math.round(H*0.22)),null,true,[{r:[{t:titre,sz:titleFS,b:1,c:'FFFFFF'}]}],'ctr');
-    if(sub) shapes+=pSp(++id,'sub',e(rLeft),e(rTop+Math.round(H*0.24)),e(W-rLeft-rPad),e(Math.round(H*0.14)),null,true,[{r:[{t:sub,sz:subFS,b:0,c:'E0E0E0'}]}]);
-    if(date) shapes+=pSp(++id,'dt2',e(rLeft),He-e(Math.round(H*0.15)),e(W-rLeft-rPad),e(Math.round(H*0.10)),null,true,[{r:[{t:date,sz:dateFS,b:0,c:'CCCCCC'}]}]);
-  } else {
-    // Content slide
-    var entH=Math.round(H*0.16),footH=Math.round(H*0.07);
-    var titleFS2=px2pt(Math.round(W*0.026));
-    var bodyFS=px2pt(Math.round(W*0.020));
-    var iFS2=px2pt(Math.round(Math.round(p.h*DOC_BLOC_SCALE*1.3)*0.72));
-    // Header background
-    shapes+=pSp(++id,'hdr-bg',0,0,We,e(entH),'FFFFFF',false,null);
-    // Header border
-    shapes+=pSp(++id,'hdr-line',0,e(entH-3),We,e(3),aH,false,null);
-    // Footer
-    shapes+=pSp(++id,'ftr',0,He-e(footH),We,e(footH),aH,false,null);
-    // Picto in header
-    shapes+=pPic(++id,'picto','rId2',e(pad),e(Math.round((entH-ph)/2)),e(pw),e(ph));
-    // Institution in header
-    shapes+=pSp(++id,'inst-h',e(pad+pw+8),e(Math.round((entH-Math.round(ph*0.8))/2)),e(leftW),e(e(ph)),null,true,[
-      {r:[{t:l1+(l2?' — '+l2:''),sz:iFS2,b:1,c:'1A1A1A'}]}
-    ]);
-    // Title
-    shapes+=pSp(++id,'titre',e(pad),e(entH+pad),We-e(2*pad),e(Math.round(H*0.14)),null,true,[{r:[{t:titre,sz:titleFS2,b:1,c:aH}]}]);
-    // Body
-    var bParas=(body||'').split('\n').map(function(line){return {r:[{t:line,sz:bodyFS,b:0,c:'1A1A1A'}]};});
-    if(!bParas.length)bParas=[{r:[{t:'',sz:bodyFS}]}];
-    shapes+=pSp(++id,'body',e(pad),e(entH+pad+Math.round(H*0.16)),We-e(2*pad),He-e(entH+footH+2*pad+Math.round(H*0.16)),null,true,bParas);
-  }
+  var slideParts=[], slideRelsParts=[], ctOverrides='', sldIdEntries='';
+  var presRels='<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster" Target="slideMasters/slideMaster1.xml"/>';
+  var slideRelXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image1.png"/></Relationships>';
 
-  var slideR='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image1.png"/></Relationships>';
+  pptSlides.forEach(function(s, idx){
+    var n=idx+1, shapes;
+    if (s.type==='cover') shapes=buildCoverShapes(s.titre,s.sub,s.date,l1,l2,dir,aH,W,H,We,He,e,p,pad,leftW);
+    else if (s.type==='closing') shapes=buildCoverShapes(s.titre,s.message,'',l1,l2,dir,aH,W,H,We,He,e,p,pad,leftW);
+    else if (s.type==='kpi') shapes=buildKpiShapes(s.titre,s.items,l1,l2,aH,W,H,We,He,e,p,pad);
+    else shapes=buildContentShapes(s.titre,s.body,l1,l2,dir,aH,W,H,We,He,e,p,pad,leftW);
+    slideParts.push({name:'ppt/slides/slide'+n+'.xml', data:sldXml(shapes)});
+    slideRelsParts.push({name:'ppt/slides/_rels/slide'+n+'.xml.rels', data:slideRelXml});
+    ctOverrides+='<Override PartName="/ppt/slides/slide'+n+'.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>';
+    var rid='rId'+(n+1);
+    sldIdEntries+='<p:sldId id="'+(255+n)+'" r:id="'+rid+'"/>';
+    presRels+='<Relationship Id="'+rid+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide" Target="slides/slide'+n+'.xml"/>';
+  });
+
   var files=[
-    {name:'[Content_Types].xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/><Override PartName="/ppt/slides/slide1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/><Override PartName="/ppt/slideLayouts/slideLayout1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml"/><Override PartName="/ppt/slideMasters/slideMaster1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml"/><Override PartName="/ppt/theme/theme1.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/></Types>'},
+    {name:'[Content_Types].xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>'+ctOverrides+'<Override PartName="/ppt/slideLayouts/slideLayout1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml"/><Override PartName="/ppt/slideMasters/slideMaster1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml"/><Override PartName="/ppt/theme/theme1.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/></Types>'},
     {name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="ppt/presentation.xml"/></Relationships>'},
-    {name:'ppt/presentation.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:presentation xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" saveSubsetFonts="1"><p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst><p:sldIdLst><p:sldId id="256" r:id="rId2"/></p:sldIdLst><p:sldSz cx="'+We+'" cy="'+He+'" type="custom"/><p:notesSz cx="6858000" cy="9144000"/><p:defaultTextStyle><a:defPPr><a:defRPr lang="fr-FR"/></a:defPPr></p:defaultTextStyle></p:presentation>'},
-    {name:'ppt/_rels/presentation.xml.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster" Target="slideMasters/slideMaster1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide" Target="slides/slide1.xml"/></Relationships>'},
-    {name:'ppt/slides/slide1.xml',data:sldXml(shapes)},
-    {name:'ppt/slides/_rels/slide1.xml.rels',data:slideR},
+    {name:'ppt/presentation.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:presentation xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" saveSubsetFonts="1"><p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst><p:sldIdLst>'+sldIdEntries+'</p:sldIdLst><p:sldSz cx="'+We+'" cy="'+He+'" type="custom"/><p:notesSz cx="6858000" cy="9144000"/><p:defaultTextStyle><a:defPPr><a:defRPr lang="fr-FR"/></a:defPPr></p:defaultTextStyle></p:presentation>'},
+    {name:'ppt/_rels/presentation.xml.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+presRels+'</Relationships>'}
+  ].concat(slideParts, slideRelsParts, [
     {name:'ppt/media/image1.png',data:pictoBytes},
     {name:'ppt/slideLayouts/slideLayout1.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:sldLayout xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" type="blank" preserve="1"><p:cSld><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr></p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sldLayout>'},
     {name:'ppt/slideLayouts/_rels/slideLayout1.xml.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster" Target="../slideMasters/slideMaster1.xml"/></Relationships>'},
     {name:'ppt/slideMasters/slideMaster1.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:sldMaster xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld><p:bg><p:bgRef idx="1001"><a:schemeClr val="bg1"/></p:bgRef></p:bg><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr></p:spTree></p:cSld><p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/><p:sldLayoutIdLst><p:sldLayoutId id="2147483649" r:id="rId1"/></p:sldLayoutIdLst><p:txStyles><p:titleStyle/><p:bodyStyle/><p:otherStyle/></p:txStyles></p:sldMaster>'},
     {name:'ppt/slideMasters/_rels/slideMaster1.xml.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="../theme/theme1.xml"/></Relationships>'},
     {name:'ppt/theme/theme1.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Charte Etat"><a:themeElements><a:clrScheme name="Charte"><a:dk1><a:srgbClr val="1A1A1A"/></a:dk1><a:lt1><a:srgbClr val="FFFFFF"/></a:lt1><a:dk2><a:srgbClr val="'+aH+'"/></a:dk2><a:lt2><a:srgbClr val="F0F0F0"/></a:lt2><a:accent1><a:srgbClr val="000091"/></a:accent1><a:accent2><a:srgbClr val="E1000F"/></a:accent2><a:accent3><a:srgbClr val="21215A"/></a:accent3><a:accent4><a:srgbClr val="005841"/></a:accent4><a:accent5><a:srgbClr val="FFD500"/></a:accent5><a:accent6><a:srgbClr val="EA5433"/></a:accent6><a:hlink><a:srgbClr val="0563C1"/></a:hlink><a:folHlink><a:srgbClr val="954F72"/></a:folHlink></a:clrScheme><a:fontScheme name="Office"><a:majorFont><a:latin typeface="Arial"/><a:ea typeface=""/><a:cs typeface=""/></a:majorFont><a:minorFont><a:latin typeface="Arial"/><a:ea typeface=""/><a:cs typeface=""/></a:minorFont></a:fontScheme><a:fmtScheme name="Office"><a:fillStyleLst><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:fillStyleLst><a:lnStyleLst><a:ln w="6350"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln><a:ln w="12700"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln><a:ln w="19050"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln></a:lnStyleLst><a:effectStyleLst><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst/></a:effectStyle></a:effectStyleLst><a:bgFillStyleLst><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:bgFillStyleLst></a:fmtScheme></a:themeElements></a:theme>'}
-  ];
+  ]);
   var zip=makeZip(files);
   var blob=new Blob([zip],{type:'application/vnd.openxmlformats-officedocument.presentationml.presentation'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');
-  a.href=url;a.download='diapo-charte-etat.pptx';a.click();
+  a.href=url;a.download='diaporama-charte-etat.pptx';a.click();
   setTimeout(function(){URL.revokeObjectURL(url);},2000);
-  toast('Diapo exportée en .pptx');
+  toast('Diaporama exporté en .pptx ('+pptSlides.length+' diapositive'+(pptSlides.length>1?'s':'')+')');
+}
+
+// ── Export ZIP de toutes les diapositives en PNG ────────────────────
+async function dlPptAllPNG() {
+  var l1=v('ppt-l1'), l2=v('ppt-l2'), dir=v('ppt-dir'), accent=v('ppt-accent'), fmt=v('ppt-fmt');
+  var W, H;
+  if (fmt==='169') { W=960; H=540; } else { W=794; H=1123; }
+  var pad=Math.round(W*0.055), leftW=Math.round(W*0.30);
+  var p=PICTO.color.sm;
+  toast('Génération des diapositives…');
+  try {
+    var entries=[];
+    for (var i=0;i<pptSlides.length;i++) {
+      var s=pptSlides[i], html;
+      if (s.type==='cover') html=buildCoverHTML(s.titre,s.sub,s.date,l1,l2,dir,accent,W,H,pad,leftW,p);
+      else if (s.type==='closing') html=buildCoverHTML(s.titre,s.message,'',l1,l2,dir,accent,W,H,pad,leftW,p);
+      else if (s.type==='kpi') html=buildKpiHTML(s.titre,s.items,l1,l2,accent,W,H,pad,p);
+      else html=buildContentHTML(s.titre,s.body,l1,l2,dir,accent,W,H,pad,p);
+      var bytes = await captureHTMLToPNGBytes('<div style="width:'+W+'px;height:'+H+'px;">'+html+'</div>');
+      entries.push({name:'diapo-'+(i+1)+'-'+s.type+'.png', data:bytes});
+    }
+    var zip=makeZip(entries);
+    dlBlob(zip,'application/zip','diapositives.zip');
+    toast(entries.length+' diapositive(s) exportée(s) en PNG');
+  } catch(e) { toast('Erreur : '+e.message); console.error(e); }
 }
 
 // ── Profil partagé ────────────────────────────────────────────────
@@ -3006,23 +3162,36 @@ function applyProfile() {
 
 // ── Persistance locale (localStorage) ─────────────────────────────
 const STORE_KEY = 'charte-etat-v1';
-function saveState() {
+function collectFormData() {
   const data = {};
   document.querySelectorAll('input[id],select[id],textarea[id]').forEach(el => {
     if (el.type === 'file') return;
     data[el.id] = el.type === 'checkbox' ? el.checked : el.value;
   });
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
+  data.__pptSlides = pptSlides;
+  data.__pptCurrent = pptCurrent;
+  return data;
+}
+function applyFormData(data) {
+  Object.entries(data).forEach(([id, val]) => {
+    if (id === '__pptSlides' || id === '__pptCurrent') return;
+    const el = document.getElementById(id);
+    if (!el || el.type === 'file') return;
+    if (el.type === 'checkbox') el.checked = !!val; else el.value = val;
+  });
+  if (Array.isArray(data.__pptSlides) && data.__pptSlides.length) pptSlides = data.__pptSlides;
+  if (typeof data.__pptCurrent === 'number') pptCurrent = data.__pptCurrent;
+  if (pptCurrent >= pptSlides.length || pptCurrent < 0) pptCurrent = 0;
+  renderPptEditor(); renderPptSlideList();
+}
+function saveState() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(collectFormData())); } catch (e) {}
 }
 function restoreState() {
   let data = null;
   try { data = JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) {}
   if (!data) return;
-  Object.entries(data).forEach(([id, val]) => {
-    const el = document.getElementById(id);
-    if (!el || el.type === 'file') return;
-    if (el.type === 'checkbox') el.checked = !!val; else el.value = val;
-  });
+  applyFormData(data);
 }
 function resetState() {
   try { localStorage.removeItem(STORE_KEY); } catch (e) {}
@@ -3086,12 +3255,7 @@ function copyRich(id) {
 
 // ── Profil : export / import JSON (partage en équipe) ─────────────
 function exportProfil() {
-  const data = {};
-  document.querySelectorAll('input[id],select[id],textarea[id]').forEach(el => {
-    if (el.type === 'file') return;
-    data[el.id] = el.type === 'checkbox' ? el.checked : el.value;
-  });
-  dlBlob(JSON.stringify(data, null, 2), 'application/json', 'profil-charte-etat.json');
+  dlBlob(JSON.stringify(collectFormData(), null, 2), 'application/json', 'profil-charte-etat.json');
   toast('Profil exporté — partagez ce fichier avec votre équipe');
 }
 function importProfil(event) {
@@ -3101,11 +3265,7 @@ function importProfil(event) {
   reader.onload = e => {
     try {
       const data = JSON.parse(e.target.result);
-      Object.entries(data).forEach(([id, val]) => {
-        const el = document.getElementById(id);
-        if (!el || el.type === 'file') return;
-        if (el.type === 'checkbox') el.checked = !!val; else el.value = val;
-      });
+      applyFormData(data);
       renderAll(); saveState();
       toast('Profil importé');
     } catch (err) { toast('Fichier de profil invalide'); }
@@ -3127,6 +3287,7 @@ function importProfil(event) {
     const el = document.getElementById(id);
     if (el && !el.value) el.valueAsDate = new Date();
   });
+  renderPptEditor(); renderPptSlideList();
   renderAll();
   document.fonts.ready.then(renderAll);
   // Navigation clavier entre onglets (RGAA)
