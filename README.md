@@ -23,7 +23,12 @@ https://julientexier86.github.io/charte-graphique-etat-men/charte_etat_final_2.h
 | **Réseaux sociaux** | Bannières Instagram (540×540), Twitter/X (960×540), Stories (1080×1920) | PNG |
 | **Présentation** | Diapo couverture + contenu 16/9 ou A4 | PNG / **.pptx** |
 | **Fond d'écran visio** | Arrière-plan Teams/Zoom 1920×1080 (styles bleu, blanc, split) | PNG |
-| **Gabarits officiels** | Modèles Office MEN + gabarit académie de Poitiers | .docx / .pptx |
+| **Gabarits officiels** | Modèles Office MEN (papeterie, présentation 16:9 et 4:3) + diaporama académie de Poitiers | .docx / .pptx |
+
+### Profil partagé et sauvegarde automatique
+
+- **⚙ Mes informations** (carte dépliable en haut de page) : renseignez une fois votre entité, direction, identité et coordonnées, puis **« Appliquer à tous les onglets »** propage ces valeurs dans les 12 onglets.
+- **Sauvegarde automatique** : toutes les saisies sont conservées dans le navigateur (localStorage) et restaurées à la visite suivante. Le bouton **« Réinitialiser l'outil »** efface tout.
 
 ---
 
@@ -70,10 +75,15 @@ Le bouton **Exporter .pptx** génère un fichier PowerPoint natif directement da
 
 ```
 Com graphique officielle/
-├── charte_etat_final_2.html   # Outil principal (fichier unique ~8 Mo)
-├── charte_etat_final.html     # Version antérieure (archive)
+├── charte_etat_final_2.html                # Outil principal (fichier unique ~4 Mo)
+├── charte_etat_final.html                  # Version antérieure (archive locale, non versionnée)
+├── gabarit-papeterie-men-marianne.docx     # Gabarit Word officiel MEN
+├── gabarit-presentation-men-16-9.pptx      # Gabarit PowerPoint MEN 16:9
+├── gabarit-presentation-men-4-3.pptx       # Gabarit PowerPoint MEN 4:3
 └── README.md
 ```
+
+> Les gabarits Office sont aussi **embarqués en base64** dans le fichier HTML : l'outil reste 100 % autonome même diffusé seul.
 
 ---
 
@@ -91,6 +101,8 @@ Com graphique officielle/
 - La police **Marianne** n'est pas disponible nativement dans Microsoft Office ; les exports `.pptx` et `.docx` utilisent **Arial** comme substitut conforme.
 - Le picto République est rendu en PNG (pas en SVG vectoriel) dans les exports Office.
 - L'export PNG des slides utilise `html2canvas` ; les rendus très complexes peuvent différer légèrement de l'aperçu.
+- **Outlook classique (Windows)** n'affiche pas les images intégrées en base64 dans les signatures HTML : utiliser l'option **« Sans picto Marianne »** de l'onglet Signature mail (Thunderbird et Outlook web les affichent normalement).
+- La sauvegarde automatique utilise le localStorage : elle est propre à chaque navigateur et n'est pas partagée entre postes.
 
 ---
 
