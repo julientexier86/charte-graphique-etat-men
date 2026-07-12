@@ -489,6 +489,9 @@ nav.fr-tabs:before{display:none}
     <li role="presentation"><button class="tab fr-tabs__tab" onclick="showPanel('ppt',this)">Présentation</button></li>
     <li role="presentation"><button class="tab fr-tabs__tab" onclick="showPanel('visio',this)">Fond d'écran visio</button></li>
     <li role="presentation"><button class="tab fr-tabs__tab" onclick="showPanel('doctype',this)">Documents types</button></li>
+    <li role="presentation"><button class="tab fr-tabs__tab" onclick="showPanel('masse',this)">Génération en masse</button></li>
+    <li role="presentation"><button class="tab fr-tabs__tab" onclick="showPanel('affiche',this)">Affiche événement</button></li>
+    <li role="presentation"><button class="tab fr-tabs__tab" onclick="showPanel('enveloppe',this)">Étiquette / Enveloppe</button></li>
     <li role="presentation"><button class="tab fr-tabs__tab" onclick="showPanel('gabarits',this)">Gabarits officiels</button></li>
   </ul>
 </nav>
@@ -534,6 +537,7 @@ nav.fr-tabs:before{display:none}
     <div class="fg fr-input-group full" id="g-etab-name" style="display:none"><label class="fr-label">Nom officiel de l'établissement</label><input class="fr-input" id="etab-name" value="Collège Jean Jaurès" oninput="renderLogo()"/></div>
     <div class="fg fr-input-group full" id="g-etab-logo" style="display:none"><label class="fr-label">Logotype existant de l'établissement</label><input class="fr-input" id="etab-logo" type="file" accept="image/*" onchange="loadEtabLogo(event)"/></div>
   </div>
+  <div id="logo-validation" class="warn fr-callout fr-callout--brown-caramel" style="display:none;margin:0 0 16px;"></div>
   <div class="plabel">Aperçu — fond gris simulant le contexte, bloc sur fond blanc</div>
   <div class="pbox"><div style="background:#fff;padding:24px;display:inline-block;" id="logo-out"></div></div>
   <div class="btns">
@@ -564,6 +568,7 @@ nav.fr-tabs:before{display:none}
     <div class="fg fr-input-group full"><label class="fr-label">Direction / Service (à droite du bloc)</label><input class="fr-input" id="s-dir" value="Collège Jean Jaurès — Gençay" oninput="renderSig()"/></div>
     <div class="fg fr-input-group full"><label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;cursor:pointer;"><input type="checkbox" id="s-noimg" onchange="renderSig()" style="width:auto;margin:0;"/> Sans picto Marianne (recommandé pour Outlook classique)</label></div>
   </div>
+  <div id="sig-validation" class="warn fr-callout fr-callout--brown-caramel" style="display:none;margin:0 0 16px;"></div>
   <div class="plabel">Aperçu</div>
   <div class="pbox" style="background:#f0f0f0;justify-content:flex-start;">
     <div id="sig-out" style="background:#fff;padding:16px;min-width:440px;max-width:580px;width:100%"></div>
@@ -597,6 +602,7 @@ Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lo
     <div class="fg fr-input-group"><label class="fr-label">Téléphone</label><input class="fr-input" id="e-tel" value="05 49 00 00 00" oninput="renderEntete()"/></div>
     <div class="fg fr-input-group"><label class="fr-label">Mél</label><input class="fr-input" id="e-mel" value="ce.0860016A@ac-poitiers.fr" oninput="renderEntete()"/></div>
   </div>
+  <div id="entete-validation" class="warn fr-callout fr-callout--brown-caramel" style="display:none;margin:0 0 16px;"></div>
   <div class="plabel">Aperçu A4 (réduit)</div>
   <div class="pbox" style="background:#888;justify-content:center;">
     <div id="entete-out" style="background:#fff;width:560px;height:792px;flex:0 0 560px;box-shadow:0 2px 14px rgba(0,0,0,.3);overflow:hidden"></div>
@@ -637,6 +643,7 @@ Les personnels concernés sont invités à prendre connaissance des dispositions
     <div class="fg fr-input-group"><label class="fr-label">Téléphone</label><input class="fr-input" id="n-tel" value="05 49 00 00 00" oninput="renderNoteService()"/></div>
     <div class="fg fr-input-group"><label class="fr-label">Mél</label><input class="fr-input" id="n-mel" value="ce.0860016A@ac-poitiers.fr" oninput="renderNoteService()"/></div>
   </div>
+  <div id="note-validation" class="warn fr-callout fr-callout--brown-caramel" style="display:none;margin:0 0 16px;"></div>
   <div class="plabel">Aperçu A4 (réduit)</div>
   <div class="pbox" style="background:#888;justify-content:center;">
     <div id="note-out" style="background:#fff;width:560px;height:792px;flex:0 0 560px;box-shadow:0 2px 14px rgba(0,0,0,.3);overflow:hidden"></div>
@@ -699,6 +706,7 @@ Les personnels concernés sont invités à prendre connaissance des dispositions
     <div class="fg fr-input-group full"><label class="fr-label">Site web (affiché au verso)</label><input class="fr-input" id="cv-web" value="www.ac-poitiers.fr" oninput="renderCV()"/></div>
     <div class="fg fr-input-group full"><label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;cursor:pointer;"><input type="checkbox" id="cv-qr" onchange="renderCV()" style="width:auto;margin:0;"/> Ajouter un verso avec QR code vCard (coordonnées scannables)</label></div>
   </div>
+  <div id="cv-validation" class="warn fr-callout fr-callout--brown-caramel" style="display:none;margin:0 0 16px;"></div>
   <div class="plabel">Aperçu recto (85 × 55 mm)</div>
   <div class="pbox"><div style="background:#fff;display:inline-block;" id="cv-out"></div></div>
   <div class="btns">
@@ -731,6 +739,7 @@ Les personnels concernés sont invités à prendre connaissance des dispositions
         <option value="#169B62">Vert #169B62</option>
         <option value="#0063CB">Bleu clair #0063CB</option>
       </select>
+      <div id="rs-contrast" style="font-size:11px;margin-top:4px;"></div>
     </div>
     <div class="fg fr-input-group"><label class="fr-label">Format</label>
       <select class="fr-select" id="rs-fmt" onchange="renderRS()">
@@ -777,6 +786,7 @@ Les personnels concernés sont invités à prendre connaissance des dispositions
         <option value="#FFD500" style="color:#000;">Jaune</option>
         <option value="#EA5433">Orange</option>
       </select>
+      <div id="ppt-contrast" style="font-size:11px;margin-top:4px;"></div>
     </div>
     <div class="fg fr-input-group"><label class="fr-label">Vue</label>
       <select class="fr-select" id="ppt-vue" onchange="renderPPT()">
@@ -825,6 +835,7 @@ Les personnels concernés sont invités à prendre connaissance des dispositions
         <option value="#21215A">Bleu nuit</option>
         <option value="#005841">Vert</option>
       </select>
+      <div id="vi-contrast" style="font-size:11px;margin-top:4px;"></div>
     </div>
   </div>
   <div class="plabel">Aperçu 1920×1080 (réduit)</div>
@@ -850,6 +861,7 @@ Les personnels concernés sont invités à prendre connaissance des dispositions
         <option value="convocation">Convocation</option>
         <option value="odj">Ordre du jour</option>
         <option value="attestation">Attestation</option>
+        <option value="emargement">Feuille d'émargement</option>
       </select>
     </div>
     <div class="fg fr-input-group"><label class="fr-label">Entité — ligne 1</label><input class="fr-input" id="dt-l1" value="ACADÉMIE" oninput="renderDoctype()"/></div>
@@ -865,6 +877,10 @@ Les personnels concernés sont invités à prendre connaissance des dispositions
 Point d'étape sur le projet d'établissement
 Préparation de la rentrée
 Questions diverses</textarea></div>
+    <div class="fg fr-input-group full" id="g-dt-participants"><label class="fr-label">Participants (un par ligne — « Nom, Qualité »)</label><textarea class="fr-input" id="dt-participants" rows="6" oninput="renderDoctype()">DUPONT Marie, Principale adjointe
+MARTIN Jean, Professeur
+BERNARD Sophie, CPE</textarea></div>
+    <div class="fg fr-input-group" id="g-dt-vierges"><label class="fr-label">Lignes vierges supplémentaires</label><input class="fr-input" type="number" min="0" id="dt-vierges" value="5" oninput="renderDoctype()"/></div>
     <div class="fg fr-input-group full" id="g-dt-body"><label class="fr-label">Corps du document</label><textarea class="fr-input" id="dt-body" rows="5" oninput="renderDoctype()">J'ai l'honneur de vous convoquer à la réunion dont l'objet, la date et le lieu sont précisés ci-dessus.
 
 En cas d'empêchement, merci d'en informer le secrétariat dans les meilleurs délais.</textarea></div>
@@ -874,15 +890,126 @@ En cas d'empêchement, merci d'en informer le secrétariat dans les meilleurs d�
     <div class="fg fr-input-group"><label class="fr-label">Téléphone</label><input class="fr-input" id="dt-tel" value="05 49 00 00 00" oninput="renderDoctype()"/></div>
     <div class="fg fr-input-group"><label class="fr-label">Mél</label><input class="fr-input" id="dt-mel" value="ce.0860016A@ac-poitiers.fr" oninput="renderDoctype()"/></div>
   </div>
+  <div id="dt-validation" class="warn fr-callout fr-callout--brown-caramel" style="display:none;margin:0 0 16px;"></div>
   <div class="plabel">Aperçu A4 (réduit)</div>
   <div class="pbox" style="background:#888;justify-content:center;">
-    <div id="doctype-out" style="background:#fff;width:560px;height:792px;flex:0 0 560px;box-shadow:0 2px 14px rgba(0,0,0,.3);overflow:hidden"></div>
+    <div id="doctype-out" style="display:flex;flex-direction:column;gap:18px;flex:0 0 560px;"></div>
   </div>
   <div class="btns">
     <button class="fr-btn fr-btn--sm" onclick="dlDOC('doctype-out', document.getElementById('dt-type').value)">⬇ Télécharger Word (.doc)</button>
-    <button class="fr-btn fr-btn--sm" onclick="exportPNG('doctype-out', document.getElementById('dt-type').value)" style="background:#E1000F;">⬇ Exporter PNG</button>
+    <button class="fr-btn fr-btn--sm" onclick="exportPagesPNG('doctype-out', document.getElementById('dt-type').value)" style="background:#E1000F;">⬇ Exporter PNG</button>
     <button class="fr-btn fr-btn--sm fr-btn--secondary" onclick="printDoc('doctype-out')">🖨 Imprimer</button>
     <button class="fr-btn fr-btn--sm" onclick="dlHTML('doctype-out', document.getElementById('dt-type').value)">⬇ Télécharger HTML A4</button>
+  </div>
+  <div class="info fr-callout fr-callout--blue-ecume" style="margin-top:16px;margin-bottom:0;">📦 <strong>Dossier de réunion complet</strong> : génère en un ZIP la convocation, l'ordre du jour et la feuille d'émargement à partir des champs ci-dessus (quel que soit le type actuellement affiché).</div>
+  <div class="btns">
+    <button class="fr-btn fr-btn--sm fr-btn--secondary" onclick="dlDossierReunion()">📦 Générer le dossier de réunion (ZIP)</button>
+  </div>
+</div>
+</div>
+
+<!-- GÉNÉRATION EN MASSE -->
+<div class="panel" id="panel-masse">
+<div class="card">
+  <div class="card-title">Génération en masse — signatures et cartes de visite d'équipe</div>
+  <div class="info fr-callout fr-callout--blue-ecume">Importez ou collez un annuaire CSV (colonnes : prénom, nom, poste, tél, mél — séparateur virgule ou point-virgule) pour générer en un clic les signatures et/ou cartes de visite de toute une équipe, regroupées dans un fichier ZIP. Le vrai changement d'échelle pour une délégation qui gère 50 ou 200 agents.</div>
+  <div class="g2">
+    <div class="fg fr-input-group full"><label class="fr-label">Fichier CSV (optionnel)</label><input class="fr-input" id="csv-file" type="file" accept=".csv,text/csv" onchange="loadCSVFile(event)"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label">Données CSV (modifiable)</label><textarea class="fr-input" id="csv-data" rows="6" oninput="previewCSV()">prenom,nom,poste,tel,mail
+Marie,Dupont,Principale adjointe,05 49 00 00 00,marie.dupont@ac-poitiers.fr
+Jean,Martin,Professeur,05 49 00 00 01,jean.martin@ac-poitiers.fr
+Sophie,Bernard,CPE,05 49 00 00 02,sophie.bernard@ac-poitiers.fr</textarea></div>
+    <div class="fg fr-input-group"><label class="fr-label">Entité — ligne 1</label><input class="fr-input" id="csv-l1" value="ACADÉMIE" oninput="previewCSV()"/></div>
+    <div class="fg fr-input-group"><label class="fr-label">Entité — ligne 2</label><input class="fr-input" id="csv-l2" value="DE POITIERS" oninput="previewCSV()"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label">Direction / Service</label><input class="fr-input" id="csv-dir" value="Collège Jean Jaurès — Gençay" oninput="previewCSV()"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label">Adresse</label><input class="fr-input" id="csv-adr" value="1 rue de la République — 86160 Gençay" oninput="previewCSV()"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label">Site web (signatures)</label><input class="fr-input" id="csv-web" value="www.ac-poitiers.fr" oninput="previewCSV()"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label" style="display:flex;gap:20px;text-transform:none;letter-spacing:0;">
+      <span style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="csv-gen-sig" checked style="width:auto;margin:0;"/> Signatures (HTML)</span>
+      <span style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="csv-gen-cv" checked style="width:auto;margin:0;"/> Cartes de visite (PNG)</span>
+    </label></div>
+  </div>
+  <div class="plabel">Aperçu des données</div>
+  <div id="csv-preview" style="background:#fff;border:1px solid #DDDDDD;padding:12px;overflow:auto;"></div>
+  <div class="btns">
+    <button class="fr-btn fr-btn--sm" onclick="dlMassZip()">⬇ Générer le ZIP de l'équipe</button>
+  </div>
+</div>
+</div>
+
+<!-- AFFICHE ÉVÉNEMENT -->
+<div class="panel" id="panel-affiche">
+<div class="card">
+  <div class="card-title">Affiche / flyer événement</div>
+  <div class="info fr-callout fr-callout--blue-ecume">Format A4 ou A3 portrait, conforme charte : bloc-marque, accroche, bloc date/heure/lieu, pied de page contact. Pour une impression grand format haute résolution, préférer un export vectoriel professionnel.</div>
+  <div class="g2">
+    <div class="fg fr-input-group"><label class="fr-label">Entité — ligne 1</label><input class="fr-input" id="af-l1" value="ACADÉMIE" oninput="renderAffiche()"/></div>
+    <div class="fg fr-input-group"><label class="fr-label">Entité — ligne 2</label><input class="fr-input" id="af-l2" value="DE POITIERS" oninput="renderAffiche()"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label">Titre / accroche</label><input class="fr-input" id="af-titre" value="Journée portes ouvertes" oninput="renderAffiche()"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label">Sous-titre (optionnel)</label><input class="fr-input" id="af-sub" value="Venez découvrir nos formations et rencontrer nos équipes" oninput="renderAffiche()"/></div>
+    <div class="fg fr-input-group"><label class="fr-label">Date</label><input class="fr-input" id="af-date" value="Samedi 14 mars 2026" oninput="renderAffiche()"/></div>
+    <div class="fg fr-input-group"><label class="fr-label">Heure</label><input class="fr-input" id="af-heure" value="9 h – 17 h" oninput="renderAffiche()"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label">Lieu</label><input class="fr-input" id="af-lieu" value="Collège Jean Jaurès — Gençay" oninput="renderAffiche()"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label">Description (optionnel)</label><textarea class="fr-input" id="af-desc" rows="4" oninput="renderAffiche()">Ateliers, visites des ateliers et rencontres avec les équipes pédagogiques. Entrée libre, ouvert à tous.</textarea></div>
+    <div class="fg fr-input-group full"><label class="fr-label">Contact (pied de page)</label><input class="fr-input" id="af-contact" value="www.ac-poitiers.fr · 05 49 00 00 00" oninput="renderAffiche()"/></div>
+    <div class="fg fr-input-group"><label class="fr-label">Format</label>
+      <select class="fr-select" id="af-fmt" onchange="renderAffiche()">
+        <option value="a4">A4 portrait</option>
+        <option value="a3">A3 portrait</option>
+      </select>
+    </div>
+    <div class="fg fr-input-group"><label class="fr-label">Couleur accent</label>
+      <select class="fr-select" id="af-accent" onchange="renderAffiche()">
+        <option value="#000091">Bleu France</option>
+        <option value="#21215A">Bleu nuit</option>
+        <option value="#E1000F">Rouge Marianne</option>
+        <option value="#005841">Vert</option>
+        <option value="#FFD500" style="color:#000;">Jaune</option>
+        <option value="#EA5433">Orange</option>
+      </select>
+      <div id="af-contrast" style="font-size:11px;margin-top:4px;"></div>
+    </div>
+  </div>
+  <div class="plabel">Aperçu (réduit)</div>
+  <div class="pbox" style="background:#888;justify-content:center;align-items:center;min-height:340px;">
+    <div id="affiche-out" style="position:relative;overflow:hidden;flex:0 0 auto;box-shadow:0 2px 14px rgba(0,0,0,.3);"></div>
+  </div>
+  <div class="btns">
+    <button class="fr-btn fr-btn--sm" onclick="exportPNG('affiche-out','affiche-evenement')" style="background:#E1000F;">⬇ Exporter PNG</button>
+    <button class="fr-btn fr-btn--sm fr-btn--secondary" onclick="printDoc('affiche-out')">🖨 Imprimer</button>
+    <button class="fr-btn fr-btn--sm fr-btn--secondary" onclick="copyHTMLClip('affiche-out')">⎘ Copier HTML</button>
+  </div>
+</div>
+</div>
+
+<!-- ÉTIQUETTE / ENVELOPPE -->
+<div class="panel" id="panel-enveloppe">
+<div class="card">
+  <div class="card-title">Étiquette adresse / enveloppe</div>
+  <div class="info fr-callout fr-callout--blue-ecume">Bloc-marque expéditeur réduit + bloc destinataire, conforme aux usages postaux. Format enveloppe DL (220×110 mm) ou étiquette autocollante simple.</div>
+  <div class="g2">
+    <div class="fg fr-input-group"><label class="fr-label">Format</label>
+      <select class="fr-select" id="en-mode" onchange="renderEnveloppe()">
+        <option value="enveloppe">Enveloppe DL (220×110 mm)</option>
+        <option value="etiquette">Étiquette adresse</option>
+      </select>
+    </div>
+    <div class="fg fr-input-group"><label class="fr-label">Expéditeur — ligne 1</label><input class="fr-input" id="en-l1" value="ACADÉMIE" oninput="renderEnveloppe()"/></div>
+    <div class="fg fr-input-group"><label class="fr-label">Expéditeur — ligne 2</label><input class="fr-input" id="en-l2" value="DE POITIERS" oninput="renderEnveloppe()"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label">Direction / Service expéditeur</label><input class="fr-input" id="en-dir" value="Collège Jean Jaurès — Gençay" oninput="renderEnveloppe()"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label">Adresse expéditeur</label><input class="fr-input" id="en-adr" value="1 rue de la République — 86160 Gençay" oninput="renderEnveloppe()"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label">Destinataire (une ligne par élément)</label><textarea class="fr-input" id="en-dest" rows="4" oninput="renderEnveloppe()">Madame Claire DURAND
+12 rue des Écoles
+75015 Paris</textarea></div>
+  </div>
+  <div class="plabel">Aperçu</div>
+  <div class="pbox" style="background:#888;justify-content:center;align-items:center;min-height:200px;">
+    <div id="enveloppe-out" style="position:relative;overflow:hidden;flex:0 0 auto;box-shadow:0 2px 14px rgba(0,0,0,.3);"></div>
+  </div>
+  <div class="btns">
+    <button class="fr-btn fr-btn--sm" onclick="exportPNG('enveloppe-out','enveloppe')" style="background:#E1000F;">⬇ Exporter PNG</button>
+    <button class="fr-btn fr-btn--sm fr-btn--secondary" onclick="printDoc('enveloppe-out')">🖨 Imprimer</button>
+    <button class="fr-btn fr-btn--sm fr-btn--secondary" onclick="copyHTMLClip('enveloppe-out')">⎘ Copier HTML</button>
   </div>
 </div>
 </div>
@@ -966,6 +1093,7 @@ Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lo
     <div class="fg fr-input-group"><label class="fr-label">Téléphone</label><input class="fr-input" id="cr-tel" value="05 49 00 00 00" oninput="renderCourrier()"/></div>
     <div class="fg fr-input-group"><label class="fr-label">Mél</label><input class="fr-input" id="cr-mel" value="prenom.nom@ac-poitiers.fr" oninput="renderCourrier()"/></div>
   </div>
+  <div id="courrier-validation" class="warn fr-callout fr-callout--brown-caramel" style="display:none;margin:0 0 16px;"></div>
   <div class="plabel">Aperçu A4 (réduit)</div>
   <div class="pbox" style="background:#888;justify-content:center;">
     <div id="courrier-out" style="display:flex;flex-direction:column;gap:18px;flex:0 0 560px;"></div>
@@ -1021,6 +1149,38 @@ function esc(s) {
 
 function linesHTML(s) {
   return esc(s).replace(/\n/g, '<br/>');
+}
+
+// ── Contraste RGAA (WCAG 2) ────────────────────────────────────────
+function hexToRgb(hex) {
+  const h = hex.replace('#', '');
+  return [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16));
+}
+function relLuminance([r, g, b]) {
+  const f = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+  const [R, G, B] = [r, g, b].map(f);
+  return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+}
+function contrastRatio(hex1, hex2) {
+  const L1 = relLuminance(hexToRgb(hex1)), L2 = relLuminance(hexToRgb(hex2));
+  const [lighter, darker] = L1 > L2 ? [L1, L2] : [L2, L1];
+  return (lighter + 0.05) / (darker + 0.05);
+}
+function contrastBadge(accentHex) {
+  const ratio = Math.round(contrastRatio(accentHex, '#FFFFFF') * 10) / 10;
+  if (ratio >= 4.5) return `<span style="color:#18753C;">✓ Contraste texte blanc : ${ratio}:1 — conforme RGAA</span>`;
+  if (ratio >= 3)   return `<span style="color:#B34000;">⚠ Contraste texte blanc : ${ratio}:1 — grand texte uniquement</span>`;
+  return `<span style="color:#CE0500;">✗ Contraste texte blanc : ${ratio}:1 — insuffisant, préférez du texte foncé</span>`;
+}
+
+// ── Validation des champs (bandeau non bloquant) ───────────────────
+function isValidEmail(s) { return !s || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
+function renderValidation(containerId, issues) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (!issues.length) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.style.display = 'block';
+  el.innerHTML = issues.map(i => '⚠ ' + i).join('<br>');
 }
 
 const PICTO = {
@@ -1175,13 +1335,12 @@ function renderLogo() {
     html = makeBlocHTML(L1, L2, nb, size);
   }
   document.getElementById('logo-out').innerHTML = html;
+  const logoIssues = [];
+  if (type !== 'etablissement' && (l1.length > 22 || l2.length > 28)) logoIssues.push('L\'intitulé est long : il pourra déborder à l\'affichage — vérifiez l\'aperçu.');
+  renderValidation('logo-validation', logoIssues);
 }
 
-function renderSig() {
-  const pre=v('s-pre'), nom=v('s-nom'), pos=v('s-pos'), bur=v('s-bur');
-  const adr=v('s-adr'), tel=v('s-tel'), mel=v('s-mel'), web=v('s-web');
-  const e1=v('s-e1'), e2=v('s-e2'), sdir=v('s-dir');
-  const noimg=document.getElementById('s-noimg').checked;
+function buildSigHTML(d) {
   const p = PICTO.color.sm;
   const pw = Math.round(p.w * MAIL_BLOC_SCALE);
   const ph = Math.round(p.h * MAIL_BLOC_SCALE);
@@ -1190,28 +1349,40 @@ function renderSig() {
   const dFS = Math.round(X * 0.46);
   const gT  = Math.round(X * 0.5);
   const gM  = Math.round(X * 0.5);
-  document.getElementById('sig-out').innerHTML = `
+  const noimg = !!d.noimg;
+  return `
 <table cellpadding="0" cellspacing="0" border="0" style="${M_REG}font-size:12px;color:#1a1a1a;line-height:1.45;">
 <tr><td style="padding-bottom:10px;">
-  <div style="${M_BOLD}font-size:13px;">${esc(pre)} ${esc(nom)}</div>
-  <div style="${M_LIGHT}color:#555;">${esc(pos)}</div>
-  ${bur?`<div style="${M_LIGHT}color:#555;">${esc(bur)}</div>`:''}
-  <div style="${M_LIGHT}color:#555;margin-top:4px;">${esc(adr)}</div>
-  <div style="${M_LIGHT}">Tél&nbsp;: ${esc(tel)}</div>
-  <div style="${M_LIGHT}">Mél&nbsp;: <a href="mailto:${esc(mel)}" style="color:${BLEU};text-decoration:none;">${esc(mel)}</a></div>
-  <div style="${M_LIGHT}"><a href="https://${esc(web)}" style="color:${BLEU};text-decoration:none;">${esc(web)}</a></div>
+  <div style="${M_BOLD}font-size:13px;">${esc(d.pre)} ${esc(d.nom)}</div>
+  <div style="${M_LIGHT}color:#555;">${esc(d.pos)}</div>
+  ${d.bur?`<div style="${M_LIGHT}color:#555;">${esc(d.bur)}</div>`:''}
+  <div style="${M_LIGHT}color:#555;margin-top:4px;">${esc(d.adr)}</div>
+  <div style="${M_LIGHT}">Tél&nbsp;: ${esc(d.tel)}</div>
+  <div style="${M_LIGHT}">Mél&nbsp;: <a href="mailto:${esc(d.mel)}" style="color:${BLEU};text-decoration:none;">${esc(d.mel)}</a></div>
+  <div style="${M_LIGHT}"><a href="https://${esc(d.web)}" style="color:${BLEU};text-decoration:none;">${esc(d.web)}</a></div>
 </td></tr>
 <tr><td style="border-top:1px solid #ddd;padding-top:9px;">
   <table cellpadding="0" cellspacing="0" border="0"><tr valign="middle">
     <td style="padding-right:10px;">
       ${noimg?'':'<img src="'+p.uri+'" width="'+pw+'" height="'+ph+'" alt="Marianne" style="display:block;"/>'}
-      <div style="margin-top:${noimg?0:gT}px;${M_BOLD}font-size:${iFS}px;line-height:1.05;color:${NOIR};">${esc(e1)}<br/>${esc(e2)}</div>
+      <div style="margin-top:${noimg?0:gT}px;${M_BOLD}font-size:${iFS}px;line-height:1.05;color:${NOIR};">${esc(d.e1)}<br/>${esc(d.e2)}</div>
       <div style="margin-top:${gM}px;${S_ITALIC}font-size:${dFS}px;line-height:1.5;color:${NOIR};">Liberté<br/>Égalité<br/>Fraternité</div>
     </td>
-    ${sdir?`<td style="padding-left:10px;border-left:1px solid #ddd;${M_BOLD}font-size:10px;color:${BLEU};line-height:1.45;">${esc(sdir)}</td>`:''}
+    ${d.sdir?`<td style="padding-left:10px;border-left:1px solid #ddd;${M_BOLD}font-size:10px;color:${BLEU};line-height:1.45;">${esc(d.sdir)}</td>`:''}
   </tr></table>
 </td></tr>
 </table>`;
+}
+function renderSig() {
+  const pre=v('s-pre'), nom=v('s-nom'), pos=v('s-pos'), bur=v('s-bur');
+  const adr=v('s-adr'), tel=v('s-tel'), mel=v('s-mel'), web=v('s-web');
+  const e1=v('s-e1'), e2=v('s-e2'), sdir=v('s-dir');
+  const noimg=document.getElementById('s-noimg').checked;
+  document.getElementById('sig-out').innerHTML = buildSigHTML({pre, nom, pos, bur, adr, tel, mel, web, e1, e2, sdir, noimg});
+  const issues = [];
+  if (!isValidEmail(mel)) issues.push('L\'adresse mél « ' + esc(mel) + ' » ne semble pas valide.');
+  if (!pre.trim() || !nom.trim()) issues.push('Le prénom et le nom sont requis pour une signature complète.');
+  renderValidation('sig-validation', issues);
 }
 
 function renderEntete() {
@@ -1256,6 +1427,7 @@ function renderEntete() {
   </div>
   <div style="position:absolute;left:0;right:0;bottom:43px;text-align:center;${M_REG}font-size:7.5px;color:${NOIR};">1/20</div>
 </div>`;
+  renderValidation('entete-validation', isValidEmail(mel) ? [] : ['L\'adresse mél « ' + esc(mel) + ' » ne semble pas valide.']);
 }
 
 function renderNoteService() {
@@ -1311,6 +1483,7 @@ function renderNoteService() {
   </div>
   <div style="position:absolute;left:0;right:0;bottom:43px;text-align:center;${M_REG}font-size:7.5px;color:${NOIR};">1/1</div>
 </div>`;
+  renderValidation('note-validation', isValidEmail(mel) ? [] : ['L\'adresse mél « ' + esc(mel) + ' » ne semble pas valide.']);
 }
 
 function renderCP() {
@@ -1343,11 +1516,7 @@ function renderCP() {
 </div>`;
 }
 
-function renderCV() {
-  const e1=v('cv-e1'), e2=v('cv-e2'), dir=v('cv-dir');
-  const pre=v('cv-pre'), nom=v('cv-nom'), pos=v('cv-pos');
-  const adr=v('cv-adr'), tel=v('cv-tel'), mel=v('cv-mel');
-  const web=v('cv-web');
+function buildCVRectoHTML(d) {
   const p = PICTO.color.sm;
   const ph = Math.round(p.h * DOC_BLOC_SCALE), pw = Math.round(p.w * DOC_BLOC_SCALE);
   const X = ph;
@@ -1355,24 +1524,31 @@ function renderCV() {
   const dFS = Math.round(X * 0.46);
   const gT  = Math.round(X * 0.5);
   const gM  = Math.round(X * 0.5);
-  const recto = `
+  return `
 <div style="width:321px;height:208px;border:0.8px solid #ddd;background:#fff;display:flex;overflow:hidden;">
   <div style="width:115px;padding:12px 10px;display:flex;flex-direction:column;border-right:0.5px solid #ddd;">
     <img src="${p.uri}" width="${pw}" height="${ph}" alt="Marianne" style="display:block;"/>
-    <div style="margin-top:${gT}px;${M_BOLD}font-size:${iFS}px;line-height:1.05;color:${NOIR};">${esc(e1)}<br/>${esc(e2)}</div>
+    <div style="margin-top:${gT}px;${M_BOLD}font-size:${iFS}px;line-height:1.05;color:${NOIR};">${esc(d.e1)}<br/>${esc(d.e2)}</div>
     <div style="margin-top:${gM}px;${S_ITALIC}font-size:${dFS}px;line-height:1.5;color:${NOIR};">Liberté<br/>Égalité<br/>Fraternité</div>
-    ${dir?`<div style="margin-top:${Math.round(.5 * X)}px;${M_BOLD}font-size:6px;color:${BLEU};line-height:1.4;">${esc(dir)}</div>`:''}
+    ${d.dir?`<div style="margin-top:${Math.round(.5 * X)}px;${M_BOLD}font-size:6px;color:${BLEU};line-height:1.4;">${esc(d.dir)}</div>`:''}
   </div>
   <div style="flex:1;padding:12px 10px;display:flex;flex-direction:column;justify-content:center;">
-    <div style="${M_BOLD}font-size:8.5px;color:${NOIR};margin-bottom:3px;">${esc(pre)} ${esc(nom)}</div>
-    <div style="${M_REG}font-size:7.5px;color:#555;margin-bottom:8px;">${esc(pos)}</div>
+    <div style="${M_BOLD}font-size:8.5px;color:${NOIR};margin-bottom:3px;">${esc(d.pre)} ${esc(d.nom)}</div>
+    <div style="${M_REG}font-size:7.5px;color:#555;margin-bottom:8px;">${esc(d.pos)}</div>
     <div style="border-top:0.5px solid #eee;padding-top:6px;">
-      <div style="${M_LIGHT}font-size:7px;color:#555;line-height:1.8;">${esc(adr)}</div>
-      <div style="${M_LIGHT}font-size:7px;color:#555;">Tél&nbsp;: ${esc(tel)}</div>
-      <div style="${M_LIGHT}font-size:7px;color:${BLEU};">${esc(mel)}</div>
+      <div style="${M_LIGHT}font-size:7px;color:#555;line-height:1.8;">${esc(d.adr)}</div>
+      <div style="${M_LIGHT}font-size:7px;color:#555;">Tél&nbsp;: ${esc(d.tel)}</div>
+      <div style="${M_LIGHT}font-size:7px;color:${BLEU};">${esc(d.mel)}</div>
     </div>
   </div>
 </div>`;
+}
+function renderCV() {
+  const e1=v('cv-e1'), e2=v('cv-e2'), dir=v('cv-dir');
+  const pre=v('cv-pre'), nom=v('cv-nom'), pos=v('cv-pos');
+  const adr=v('cv-adr'), tel=v('cv-tel'), mel=v('cv-mel');
+  const web=v('cv-web');
+  const recto = buildCVRectoHTML({e1, e2, dir, pre, nom, pos, adr, tel, mel});
   let verso = '';
   if (document.getElementById('cv-qr').checked) {
     const org = ((e1 + ' ' + e2).trim() + (dir ? ' — ' + dir : '')).trim();
@@ -1388,6 +1564,10 @@ function renderCV() {
 </div></div>`;
   }
   document.getElementById('cv-out').innerHTML = `<div id="cv-recto">${recto}</div>${verso}`;
+  const issues = [];
+  if (!isValidEmail(mel)) issues.push('L\'adresse mél « ' + esc(mel) + ' » ne semble pas valide.');
+  if (!pre.trim() || !nom.trim()) issues.push('Le prénom et le nom sont requis pour une carte de visite complète.');
+  renderValidation('cv-validation', issues);
 }
 
 function exportCVVerso() {
@@ -1568,25 +1748,12 @@ const DT_BODY_DEFAULTS = {
   convocation: "J'ai l'honneur de vous convoquer à la réunion dont l'objet, la date et le lieu sont précisés ci-dessus.\n\nEn cas d'empêchement, merci d'en informer le secrétariat dans les meilleurs délais.",
   attestation: "atteste que [Prénom NOM], [qualité], exerce ses fonctions au sein de l'établissement depuis le [date].\n\nLa présente attestation est délivrée à la demande de l'intéressé(e) pour servir et valoir ce que de droit."
 };
-function renderDoctype(typeChanged) {
-  const type = v('dt-type');
-  const show = (id, on) => { document.getElementById(id).style.display = on ? 'flex' : 'none'; };
-  show('g-dt-dest',   type === 'convocation');
-  show('g-dt-obj',    type !== 'attestation');
-  show('g-dt-heure',  type !== 'attestation');
-  show('g-dt-lieu',   type !== 'attestation');
-  show('g-dt-points', type === 'odj');
-  show('g-dt-body',   type !== 'odj');
-  show('g-dt-ville',  type === 'attestation');
-  if (typeChanged) {
-    const bodyEl = document.getElementById('dt-body');
-    const defs = Object.values(DT_BODY_DEFAULTS);
-    if (!bodyEl.value.trim() || defs.includes(bodyEl.value)) bodyEl.value = DT_BODY_DEFAULTS[type] || bodyEl.value;
-  }
+function buildDoctypePages(type) {
   const l1=v('dt-l1'), l2=v('dt-l2'), dir=v('dt-dir'), emit=v('dt-emit');
   const dest=v('dt-dest'), obj=v('dt-obj'), heure=v('dt-heure'), lieu=v('dt-lieu');
   const points=v('dt-points'), body=v('dt-body'), ville=v('dt-ville'), sign=v('dt-sign');
   const adr=v('dt-adr'), tel=v('dt-tel'), mel=v('dt-mel');
+  const participants=v('dt-participants'), vierges=parseInt(v('dt-vierges'),10)||0;
   const dval=document.getElementById('dt-date').value;
   const d = dval ? new Date(dval) : new Date();
   const dsLong = d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
@@ -1598,6 +1765,53 @@ function renderDoctype(typeChanged) {
   const pw=Math.round(p.w*DOC_BLOC_SCALE), ph=Math.round(p.h*DOC_BLOC_SCALE);
   const iFS=Math.round(ph*0.72), dFS=Math.round(ph*0.46);
   const gT=Math.round(ph*0.5), gM=Math.round(ph*0.5);
+  const footer=`<div style="position:absolute;left:45px;bottom:34px;right:45px;border-top:0.5px solid #ccc;padding-top:4px;${M_REG}font-size:7.5px;line-height:1.3;color:#555;">${esc(adr)}&nbsp;&nbsp;|&nbsp;&nbsp;Tél&nbsp;: ${esc(tel)}&nbsp;&nbsp;|&nbsp;&nbsp;Mél&nbsp;: ${esc(mel)}</div>`;
+  const headBloc = `
+  <div style="position:absolute;left:45px;top:22px;width:150px;">
+    <img src="${p.uri}" width="${pw}" height="${ph}" alt="Marianne" style="display:block;"/>
+    <div style="margin-top:${gT}px;${M_BOLD}font-size:${iFS}px;line-height:1.05;color:${NOIR};">${esc(l1)}<br/>${esc(l2)}</div>
+    <div style="margin-top:${gM}px;${S_ITALIC}font-size:${dFS}px;line-height:1.5;color:${NOIR};">Liberté<br/>Égalité<br/>Fraternité</div>
+  </div>
+  ${dir?`<div style="position:absolute;right:45px;top:24px;width:185px;text-align:right;${M_BOLD}font-size:10px;line-height:1.3;color:${NOIR};">${linesHTML(dir)}</div>`:''}`;
+
+  if (type === 'emargement') {
+    const rows = participants.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{
+      const parts = l.split(',');
+      return {nom:(parts[0]||'').trim(), qualite:(parts.slice(1).join(',')||'').trim()};
+    });
+    for (let i=0;i<vierges;i++) rows.push({nom:'',qualite:''});
+    const headerRow = `<tr><th style="text-align:left;border-bottom:2px solid ${BLEU};padding:6px;${M_BOLD}font-size:9px;text-transform:uppercase;color:${BLEU};">Nom</th><th style="text-align:left;border-bottom:2px solid ${BLEU};padding:6px;${M_BOLD}font-size:9px;text-transform:uppercase;color:${BLEU};">Qualité</th><th style="text-align:left;border-bottom:2px solid ${BLEU};padding:6px;width:140px;${M_BOLD}font-size:9px;text-transform:uppercase;color:${BLEU};">Signature</th></tr>`;
+    const rowHtml = r => `<tr><td style="border-bottom:1px solid #ccc;padding:7px 6px;${M_REG}font-size:9.5px;">${esc(r.nom)}</td><td style="border-bottom:1px solid #ccc;padding:7px 6px;${M_REG}font-size:9.5px;">${esc(r.qualite)}</td><td style="border-bottom:1px solid #ccc;padding:7px 6px;"></td></tr>`;
+    const tableOpen = '<table style="width:100%;border-collapse:collapse;">';
+    const tableClose = '</table>';
+
+    const meas = document.createElement('div');
+    meas.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;width:470px;';
+    document.body.appendChild(meas);
+    const hOf = arr => { meas.innerHTML = tableOpen + headerRow + arr.join('') + tableClose; return meas.offsetHeight; };
+    const CAP1 = 430, CAPN = 670;
+    const pageRows = []; let cur = [];
+    const cap = () => pageRows.length === 0 ? CAP1 : CAPN;
+    rows.forEach(r => {
+      const rh = rowHtml(r);
+      if (cur.length && hOf(cur.concat(rh)) > cap()) { pageRows.push(cur); cur = [rh]; } else cur.push(rh);
+    });
+    if (cur.length || !pageRows.length) pageRows.push(cur);
+    meas.remove();
+
+    const total = pageRows.length;
+    return pageRows.map((rowsHtml, i) => {
+      const first = i === 0;
+      const pn = total > 1 ? `<div style="position:absolute;right:45px;bottom:18px;${M_REG}font-size:7.5px;color:#555;">Page ${i+1}/${total}</div>` : '';
+      const titleBloc = first
+        ? `<div style="position:absolute;left:45px;right:45px;top:215px;text-align:center;${M_BOLD}font-size:16px;letter-spacing:.12em;color:${BLEU};">FEUILLE D'ÉMARGEMENT</div>
+           <div style="position:absolute;left:180px;right:180px;top:242px;border-top:1.5px solid ${ROUGE};"></div>
+           <div style="position:absolute;left:45px;right:45px;top:255px;${M_REG}font-size:10px;line-height:1.5;">${obj?`<div style="${M_BOLD}">${esc(obj)}</div>`:''}<div>${esc(dsLong)}${heure?` à ${esc(heure)}`:''}${lieu?` — ${esc(lieu)}`:''}</div></div>`
+        : `<div style="position:absolute;left:45px;right:45px;top:40px;${M_BOLD}font-size:11px;color:${BLEU};">FEUILLE D'ÉMARGEMENT${obj?` — ${esc(obj)}`:''} (suite)</div>`;
+      const tableTop = first ? 305 : 65;
+      return `<div class="courrier-page" style="position:relative;width:560px;height:792px;background:#fff;color:#1a1a1a;${M_REG}overflow:hidden;">${first?headBloc:''}${titleBloc}<div style="position:absolute;left:45px;right:45px;top:${tableTop}px;">${tableOpen}${headerRow}${rowsHtml.join('')}${tableClose}</div>${footer}${pn}</div>`;
+    });
+  }
 
   let meta='', corps='';
   if (type==='convocation') {
@@ -1625,21 +1839,245 @@ function renderDoctype(typeChanged) {
       <div style="${M_REG}font-size:10px;">${esc(sign)}</div>
       <div style="${M_BOLD}font-size:10px;margin-top:26px;">${esc(emitName)}</div>
     </div>`;
-  document.getElementById('doctype-out').innerHTML=`
-<div style="position:relative;width:560px;height:792px;background:#fff;color:#1a1a1a;${M_REG}overflow:hidden;">
-  <div style="position:absolute;left:45px;top:22px;width:150px;">
-    <img src="${p.uri}" width="${pw}" height="${ph}" alt="Marianne" style="display:block;"/>
-    <div style="margin-top:${gT}px;${M_BOLD}font-size:${iFS}px;line-height:1.05;color:${NOIR};">${esc(l1)}<br/>${esc(l2)}</div>
-    <div style="margin-top:${gM}px;${S_ITALIC}font-size:${dFS}px;line-height:1.5;color:${NOIR};">Liberté<br/>Égalité<br/>Fraternité</div>
-  </div>
-  ${dir?`<div style="position:absolute;right:45px;top:24px;width:185px;text-align:right;${M_BOLD}font-size:10px;line-height:1.3;color:${NOIR};">${linesHTML(dir)}</div>`:''}
+  return [`
+<div class="courrier-page" style="position:relative;width:560px;height:792px;background:#fff;color:#1a1a1a;${M_REG}overflow:hidden;">
+  ${headBloc}
   <div style="position:absolute;left:45px;right:45px;top:215px;text-align:center;${M_BOLD}font-size:16px;letter-spacing:.12em;color:${BLEU};">${DT_TITLES[type]}</div>
   <div style="position:absolute;left:180px;right:180px;top:242px;border-top:1.5px solid ${ROUGE};"></div>
   <div style="position:absolute;left:45px;right:45px;top:268px;">
     ${meta}${corps}${signBloc}
   </div>
-  <div style="position:absolute;left:45px;bottom:34px;right:45px;border-top:0.5px solid #ccc;padding-top:4px;${M_REG}font-size:7.5px;line-height:1.3;color:#555;">${esc(adr)}&nbsp;&nbsp;|&nbsp;&nbsp;Tél&nbsp;: ${esc(tel)}&nbsp;&nbsp;|&nbsp;&nbsp;Mél&nbsp;: ${esc(mel)}</div>
-</div>`;
+  ${footer}
+</div>`];
+}
+function renderDoctype(typeChanged) {
+  const type = v('dt-type');
+  const show = (id, on) => { document.getElementById(id).style.display = on ? 'flex' : 'none'; };
+  show('g-dt-dest',   type === 'convocation');
+  show('g-dt-obj',    type !== 'attestation');
+  show('g-dt-heure',  type !== 'attestation');
+  show('g-dt-lieu',   type !== 'attestation');
+  show('g-dt-points', type === 'odj');
+  show('g-dt-body',   type !== 'odj' && type !== 'emargement');
+  show('g-dt-ville',  type === 'attestation');
+  show('g-dt-participants', type === 'emargement');
+  show('g-dt-vierges', type === 'emargement');
+  if (typeChanged) {
+    const bodyEl = document.getElementById('dt-body');
+    const defs = Object.values(DT_BODY_DEFAULTS);
+    if (!bodyEl.value.trim() || defs.includes(bodyEl.value)) bodyEl.value = DT_BODY_DEFAULTS[type] || bodyEl.value;
+  }
+  document.getElementById('doctype-out').innerHTML = buildDoctypePages(type).join('');
+  const mel = v('dt-mel');
+  renderValidation('dt-validation', isValidEmail(mel) ? [] : ['L\'adresse mél « ' + esc(mel) + ' » ne semble pas valide.']);
+}
+
+// ── Capture hors écran → PNG (dossier de réunion, génération en masse) ──
+function captureHTMLToPNGBytes(pageHtml) {
+  return new Promise((resolve, reject) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.style.cssText = 'position:fixed;left:-9999px;top:-9999px;z-index:-1;';
+    tempDiv.innerHTML = pageHtml;
+    document.body.appendChild(tempDiv);
+    html2canvas(tempDiv.firstElementChild, {backgroundColor:'#fff', scale:2, useCORS:true, allowTaint:true, logging:false}).then(canvas => {
+      document.body.removeChild(tempDiv);
+      resolve(dataUriBytes(canvas.toDataURL('image/png')));
+    }).catch(e => { document.body.removeChild(tempDiv); reject(e); });
+  });
+}
+async function dlDossierReunion() {
+  toast('Génération du dossier de réunion…');
+  try {
+    const entries = [];
+    const specs = [['convocation','convocation'], ['odj','ordre-du-jour'], ['emargement','emargement']];
+    for (const [type, label] of specs) {
+      const pages = buildDoctypePages(type);
+      for (let i = 0; i < pages.length; i++) {
+        const bytes = await captureHTMLToPNGBytes(pages[i]);
+        entries.push({name: label + (pages.length > 1 ? '-p' + (i + 1) : '') + '.png', data: bytes});
+      }
+    }
+    const zip = makeZip(entries);
+    dlBlob(zip, 'application/zip', 'dossier-reunion.zip');
+    toast('Dossier de réunion téléchargé (' + entries.length + ' fichier(s))');
+  } catch (e) { toast('Erreur : ' + e.message); console.error(e); }
+}
+
+// ── Génération en masse : import CSV annuaire ──────────────────────
+function parseCSVLine(line, delim) {
+  const out = []; let cur = ''; let inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (inQ) {
+      if (c === '"') { if (line[i+1] === '"') { cur += '"'; i++; } else inQ = false; }
+      else cur += c;
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === delim) { out.push(cur); cur = ''; }
+      else cur += c;
+    }
+  }
+  out.push(cur);
+  return out.map(s => s.trim());
+}
+function normalizeHeader(s) { return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(); }
+const CSV_ALIASES = {
+  prenom: ['prenom', 'firstname', 'first name'],
+  nom:    ['nom', 'lastname', 'last name', 'name'],
+  poste:  ['poste', 'fonction', 'titre', 'role', 'job'],
+  tel:    ['tel', 'telephone', 'phone'],
+  mail:   ['mail', 'mel', 'email', 'e-mail', 'courriel']
+};
+function parseCSV(text) {
+  const lines = text.split(/\r\n|\n|\r/).filter(l => l.trim().length);
+  if (!lines.length) return { rows: [], errors: ['Fichier vide'] };
+  const delim = (lines[0].split(';').length > lines[0].split(',').length) ? ';' : ',';
+  const headerCells = parseCSVLine(lines[0], delim).map(normalizeHeader);
+  const colIndex = {};
+  Object.entries(CSV_ALIASES).forEach(([key, aliases]) => {
+    const idx = headerCells.findIndex(h => aliases.includes(h));
+    if (idx !== -1) colIndex[key] = idx;
+  });
+  const rows = []; const errors = [];
+  lines.slice(1).forEach((line, i) => {
+    const cells = parseCSVLine(line, delim);
+    const row = {
+      prenom: colIndex.prenom !== undefined ? (cells[colIndex.prenom] || '') : '',
+      nom:    colIndex.nom    !== undefined ? (cells[colIndex.nom]    || '') : '',
+      poste:  colIndex.poste  !== undefined ? (cells[colIndex.poste]  || '') : '',
+      tel:    colIndex.tel    !== undefined ? (cells[colIndex.tel]    || '') : '',
+      mail:   colIndex.mail   !== undefined ? (cells[colIndex.mail]   || '') : ''
+    };
+    if (!row.prenom && !row.nom) { errors.push('Ligne ' + (i + 2) + ' : nom et prénom manquants, ignorée'); return; }
+    rows.push(row);
+  });
+  return { rows, errors };
+}
+function previewCSV() {
+  const { rows, errors } = parseCSV(v('csv-data'));
+  const out = document.getElementById('csv-preview');
+  let html = `<div style="${M_BOLD}font-size:12px;color:${rows.length ? BLEU : ROUGE};margin-bottom:8px;">${rows.length} personne(s) détectée(s)${errors.length ? ', ' + errors.length + ' ligne(s) ignorée(s)' : ''}</div>`;
+  if (rows.length) {
+    html += '<table style="width:100%;border-collapse:collapse;font-size:11px;"><tr style="text-align:left;border-bottom:1px solid #ddd;"><th style="padding:4px;">Prénom</th><th style="padding:4px;">Nom</th><th style="padding:4px;">Poste</th><th style="padding:4px;">Tél</th><th style="padding:4px;">Mél</th></tr>';
+    rows.slice(0, 8).forEach(r => {
+      html += `<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px;">${esc(r.prenom)}</td><td style="padding:4px;">${esc(r.nom)}</td><td style="padding:4px;">${esc(r.poste)}</td><td style="padding:4px;">${esc(r.tel)}</td><td style="padding:4px;">${esc(r.mail)}</td></tr>`;
+    });
+    if (rows.length > 8) html += `<tr><td colspan="5" style="padding:4px;color:#666;">… et ${rows.length - 8} autre(s)</td></tr>`;
+    html += '</table>';
+  }
+  if (errors.length) html += '<div style="margin-top:6px;font-size:10.5px;color:#B34000;">' + errors.map(e => esc(e)).join('<br>') + '</div>';
+  out.innerHTML = html;
+}
+function loadCSVFile(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { document.getElementById('csv-data').value = e.target.result; previewCSV(); };
+  reader.readAsText(file, 'UTF-8');
+  event.target.value = '';
+}
+async function dlMassZip() {
+  const { rows } = parseCSV(v('csv-data'));
+  if (!rows.length) { toast('Aucune ligne valide dans le CSV'); return; }
+  const genSig = document.getElementById('csv-gen-sig').checked;
+  const genCV = document.getElementById('csv-gen-cv').checked;
+  if (!genSig && !genCV) { toast('Cochez au moins un type de document à générer'); return; }
+  const orgL1 = v('csv-l1'), orgL2 = v('csv-l2'), orgDir = v('csv-dir'), orgAdr = v('csv-adr'), orgWeb = v('csv-web');
+  toast('Génération en cours — ' + rows.length + ' personne(s)…');
+  try {
+    const entries = [];
+    for (const r of rows) {
+      const base = (r.nom + '-' + r.prenom).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'contact';
+      if (genSig) {
+        const html = buildSigHTML({ pre: r.prenom, nom: r.nom.toUpperCase(), pos: r.poste, bur: '', adr: orgAdr, tel: r.tel, mel: r.mail, web: orgWeb, e1: orgL1, e2: orgL2, sdir: orgDir, noimg: false });
+        entries.push({ name: 'signatures/' + base + '.html', data: `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"></head><body>${html}</body></html>` });
+      }
+      if (genCV) {
+        const html = buildCVRectoHTML({ e1: orgL1, e2: orgL2, dir: orgDir, pre: r.prenom, nom: r.nom.toUpperCase(), pos: r.poste, adr: orgAdr, tel: r.tel, mel: r.mail });
+        const bytes = await captureHTMLToPNGBytes(`<div style="background:#fff;display:inline-block;">${html}</div>`);
+        entries.push({ name: 'cartes-visite/' + base + '.png', data: bytes });
+      }
+    }
+    const zip = makeZip(entries);
+    dlBlob(zip, 'application/zip', 'generation-masse.zip');
+    toast(rows.length + ' personne(s) générée(s) → generation-masse.zip');
+  } catch (e) { toast('Erreur : ' + e.message); console.error(e); }
+}
+
+// ── Affiche / flyer événement ───────────────────────────────────────
+function renderAffiche() {
+  const l1=v('af-l1'), l2=v('af-l2');
+  const titre=v('af-titre'), sub=v('af-sub');
+  const dateTxt=v('af-date'), heure=v('af-heure'), lieu=v('af-lieu');
+  const desc=v('af-desc'), contact=v('af-contact');
+  const accent=v('af-accent'), fmt=v('af-fmt');
+  const p=PICTO.color.sm;
+  let W,H,scale;
+  if (fmt==='a3') { W=1123; H=1587; scale=0.26; } else { W=794; H=1123; scale=0.37; }
+  const pad=Math.round(W*0.07);
+  const pw=Math.round(p.w*DOC_BLOC_SCALE*1.5), ph=Math.round(p.h*DOC_BLOC_SCALE*1.5);
+  const iFS=Math.round(ph*0.72);
+  const titleFS=Math.round(W*0.08);
+  const subFS=Math.round(W*0.032);
+  const metaFS=Math.round(W*0.026);
+  const descFS=Math.round(W*0.022);
+  const footH=Math.round(H*0.045);
+  let html=`<div style="position:relative;width:${W}px;height:${H}px;background:#fff;font-family:Marianne,Arial,sans-serif;overflow:hidden;">`;
+  html+=`<div style="position:absolute;left:${pad}px;top:${Math.round(H*0.045)}px;">
+    <img src="${p.uri}" width="${pw}" height="${ph}" style="display:block;">
+    <div style="margin-top:${Math.round(ph*0.5)}px;${M_BOLD}font-size:${iFS}px;line-height:1.05;color:${NOIR};">${esc(l1)}<br>${esc(l2)}</div>
+  </div>`;
+  const titleTop=Math.round(H*0.17);
+  html+=`<div style="position:absolute;left:${pad}px;right:${pad}px;top:${titleTop}px;${M_BOLD}font-size:${titleFS}px;line-height:1.12;color:${accent};">${esc(titre)}</div>`;
+  const subTop=titleTop+Math.round(titleFS*1.5);
+  if(sub) html+=`<div style="position:absolute;left:${pad}px;right:${pad}px;top:${subTop}px;${M_REG}font-size:${subFS}px;line-height:1.35;color:#333;">${esc(sub)}</div>`;
+  const metaTop=subTop+(sub?Math.round(subFS*2.6):Math.round(titleFS*0.9));
+  const metaParts=[dateTxt, heure, lieu].filter(Boolean);
+  if(metaParts.length) html+=`<div style="position:absolute;left:${pad}px;right:${pad}px;top:${metaTop}px;background:${accent};color:#fff;padding:${Math.round(H*0.018)}px ${Math.round(W*0.03)}px;${M_BOLD}font-size:${metaFS}px;line-height:1.6;box-sizing:border-box;">${metaParts.map(m=>esc(m)).join(' &nbsp;·&nbsp; ')}</div>`;
+  const descTop=metaTop+(metaParts.length?Math.round(metaFS*3.6):0)+Math.round(H*0.03);
+  if(desc) html+=`<div style="position:absolute;left:${pad}px;right:${pad}px;top:${descTop}px;${M_REG}font-size:${descFS}px;line-height:1.6;color:#1a1a1a;">${linesHTML(desc)}</div>`;
+  html+=`<div style="position:absolute;left:0;right:0;bottom:0;height:${footH}px;background:${accent};display:flex;align-items:center;justify-content:center;padding:0 ${pad}px;box-sizing:border-box;">
+    <span style="color:#fff;${M_REG}font-size:${Math.round(W*0.016)}px;">${esc(contact)}</span>
+  </div>`;
+  html+='</div>';
+  const out=document.getElementById('affiche-out');
+  out.style.width=Math.round(W*scale)+'px';
+  out.style.height=Math.round(H*scale)+'px';
+  out.innerHTML=`<div style="transform:scale(${scale});transform-origin:top left;width:${W}px;height:${H}px;">${html}</div>`;
+  document.getElementById('af-contrast').innerHTML = contrastBadge(accent);
+}
+
+// ── Étiquette adresse / enveloppe ────────────────────────────────────
+function renderEnveloppe() {
+  const mode=v('en-mode');
+  const l1=v('en-l1'), l2=v('en-l2'), dir=v('en-dir'), adr=v('en-adr');
+  const dest=v('en-dest');
+  const p=PICTO.color.sm;
+  let W,H,scale;
+  if (mode==='enveloppe') { W=831; H=416; scale=0.62; } else { W=397; H=216; scale=1.0; }
+  const pw=Math.round(p.w*DOC_BLOC_SCALE*(mode==='enveloppe'?0.9:0.6));
+  const ph=Math.round(p.h*DOC_BLOC_SCALE*(mode==='enveloppe'?0.9:0.6));
+  const iFS=Math.round(ph*0.72);
+  let html=`<div style="position:relative;width:${W}px;height:${H}px;background:#fff;font-family:Marianne,Arial,sans-serif;overflow:hidden;border:1px solid #ddd;box-sizing:border-box;">`;
+  if (mode==='enveloppe') {
+    html+=`<div style="position:absolute;left:24px;top:20px;">
+      <img src="${p.uri}" width="${pw}" height="${ph}" style="display:block;">
+      <div style="margin-top:${Math.round(ph*0.4)}px;${M_BOLD}font-size:${iFS}px;line-height:1.05;color:${NOIR};">${esc(l1)}<br>${esc(l2)}</div>
+      ${dir?`<div style="${M_REG}font-size:8px;color:#555;margin-top:4px;max-width:220px;">${esc(dir)}</div>`:''}
+      ${adr?`<div style="${M_REG}font-size:8px;color:#555;max-width:220px;">${esc(adr)}</div>`:''}
+    </div>`;
+    html+=`<div style="position:absolute;right:30px;top:30px;width:100px;height:70px;border:1px dashed #bbb;display:flex;align-items:center;justify-content:center;font-size:7px;color:#bbb;${M_REG}">Timbre</div>`;
+    html+=`<div style="position:absolute;left:${Math.round(W*0.42)}px;top:${Math.round(H*0.45)}px;right:40px;${M_REG}font-size:13px;line-height:1.7;color:${NOIR};">${linesHTML(dest)}</div>`;
+  } else {
+    html+=`<div style="position:absolute;left:16px;right:16px;top:16px;bottom:16px;display:flex;flex-direction:column;justify-content:center;">
+      <div style="${M_REG}font-size:12px;line-height:1.6;color:${NOIR};">${linesHTML(dest)}</div>
+    </div>`;
+    html+=`<div style="position:absolute;left:16px;bottom:8px;${M_LIGHT}font-size:6.5px;color:#999;">${esc(l1)} ${esc(l2)}${adr?' — '+esc(adr):''}</div>`;
+  }
+  html+='</div>';
+  const out=document.getElementById('enveloppe-out');
+  out.style.width=Math.round(W*scale)+'px'; out.style.height=Math.round(H*scale)+'px';
+  out.innerHTML=`<div style="transform:scale(${scale});transform-origin:top left;width:${W}px;height:${H}px;">${html}</div>`;
 }
 
 function v(id) { return document.getElementById(id).value; }
@@ -1759,6 +2197,7 @@ function renderCourrier() {
     const pn=total>1?`<div style="position:absolute;right:45px;bottom:18px;${M_REG}font-size:7.5px;color:#555;">Page ${i+1}/${total}</div>`:'';
     return `<div class="courrier-page" style="position:relative;width:560px;height:792px;background:#fff;color:#1a1a1a;${M_REG}overflow:hidden;">${first?head1:''}<div style="position:absolute;left:45px;top:${first?298:50}px;width:${FLOWW}px;">${blocks.join('')}</div>${footer}${pn}</div>`;
   }).join('');
+  renderValidation('courrier-validation', isValidEmail(mel) ? [] : ['L\'adresse mél « ' + esc(mel) + ' » ne semble pas valide.']);
 }
 
 function dlCourrierDoc() {
@@ -2088,6 +2527,7 @@ function renderRS() {
   out.style.width=Math.round(W*scale)+'px';
   out.style.height=Math.round(H*scale)+'px';
   out.innerHTML='<div style="transform:scale('+scale+');transform-origin:top left;width:'+W+'px;height:'+H+'px;">'+html+'</div>';
+  document.getElementById('rs-contrast').innerHTML = contrastBadge(bg);
 }
 
 // ── Présentation diapo (modèle Poitiers) ─────────────────────────
@@ -2170,6 +2610,7 @@ function renderPPT() {
   out.style.width=Math.round(W*scale)+'px';
   out.style.height=Math.round(H*scale)+'px';
   out.innerHTML='<div style="transform:scale('+scale+');transform-origin:top left;width:'+W+'px;height:'+H+'px;">'+html+'</div>';
+  document.getElementById('ppt-contrast').innerHTML = contrastBadge(accent);
 }
 
 // ── Fond d'écran visio ────────────────────────────────────────────
@@ -2249,6 +2690,7 @@ function renderVisio() {
   out.style.width=Math.round(W*scale)+'px';
   out.style.height=Math.round(H*scale)+'px';
   out.innerHTML='<div style="transform:scale('+scale+');transform-origin:top left;width:'+W+'px;height:'+H+'px;">'+html+'</div>';
+  document.getElementById('vi-contrast').innerHTML = contrastBadge(accent);
 }
 
 
@@ -2458,17 +2900,17 @@ function dlPPTX() {
 }
 
 // ── Profil partagé ────────────────────────────────────────────────
-const RENDERERS = [renderLogo, renderSig, renderEntete, renderNoteService, renderEtab, renderCP, renderCV, renderCourrier, renderRS, renderPPT, renderVisio, renderDoctype];
+const RENDERERS = [renderLogo, renderSig, renderEntete, renderNoteService, renderEtab, renderCP, renderCV, renderCourrier, renderRS, renderPPT, renderVisio, renderDoctype, renderAffiche, renderEnveloppe, previewCSV];
 function renderAll() { RENDERERS.forEach(f => f()); }
 
 const PROFILE_MAP = {
-  'p-e1':  ['l1','s-e1','e-l1','n-l1','cp-e1','cv-e1','rs-l1','ppt-l1','vi-l1','et-ac1','cr-ac1','dt-l1'],
-  'p-e2':  ['l2','s-e2','e-l2','n-l2','cp-e2','cv-e2','rs-l2','ppt-l2','vi-l2','et-ac2','cr-ac2','dt-l2'],
-  'p-dir': ['s-dir','e-dir','n-dir','cv-dir','ppt-dir','cr-et1','rs-etab','vi-etab1','dt-dir'],
-  'p-adr': ['s-adr','e-adr','n-adr','cv-adr','cr-adr','dt-adr'],
+  'p-e1':  ['l1','s-e1','e-l1','n-l1','cp-e1','cv-e1','rs-l1','ppt-l1','vi-l1','et-ac1','cr-ac1','dt-l1','af-l1','en-l1','csv-l1'],
+  'p-e2':  ['l2','s-e2','e-l2','n-l2','cp-e2','cv-e2','rs-l2','ppt-l2','vi-l2','et-ac2','cr-ac2','dt-l2','af-l2','en-l2','csv-l2'],
+  'p-dir': ['s-dir','e-dir','n-dir','cv-dir','ppt-dir','cr-et1','rs-etab','vi-etab1','dt-dir','en-dir','csv-dir'],
+  'p-adr': ['s-adr','e-adr','n-adr','cv-adr','cr-adr','dt-adr','en-adr','csv-adr'],
   'p-tel': ['s-tel','e-tel','n-tel','cv-tel','cr-tel','cp-ctel','dt-tel'],
   'p-mel': ['s-mel','e-mel','n-mel','cv-mel','cr-mel','cp-cmel','dt-mel'],
-  'p-web': ['s-web','rs-url']
+  'p-web': ['s-web','rs-url','csv-web']
 };
 function applyProfile() {
   Object.entries(PROFILE_MAP).forEach(([src, targets]) => {

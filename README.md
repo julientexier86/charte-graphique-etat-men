@@ -24,21 +24,35 @@ https://julientexier86.github.io/charte-graphique-etat-men/charte_etat_final_2.h
 | **Réseaux sociaux** | Bannières Instagram (540×540), Twitter/X (960×540), Stories (1080×1920) | PNG |
 | **Présentation** | Diapo couverture + contenu 16/9 ou A4 | PNG / **.pptx** |
 | **Fond d'écran visio** | Arrière-plan Teams/Zoom 1920×1080 (styles bleu, blanc, split) | PNG |
-| **Documents types** | **Convocation · ordre du jour · attestation** — gabarits A4 à champs adaptatifs | .doc / PNG / impression A4 / HTML |
+| **Documents types** | **Convocation · ordre du jour · attestation · feuille d'émargement** — gabarits A4 à champs adaptatifs, émargement paginé automatiquement | .doc / PNG / impression A4 / HTML |
+| **Génération en masse** | Import CSV annuaire (prénom, nom, poste, tél, mél) → signatures et cartes de visite de toute une équipe | ZIP (HTML + PNG) |
+| **Affiche événement** | Flyer A4/A3 portrait : accroche, bloc date/heure/lieu, description, contact | PNG / impression / HTML |
+| **Étiquette / Enveloppe** | Bloc-marque expéditeur réduit + destinataire, enveloppe DL (220×110 mm) ou étiquette | PNG / impression / HTML |
 | **Gabarits officiels** | Modèles Office MEN (papeterie, présentation 16:9 et 4:3) + diaporama académie de Poitiers | .docx / .pptx |
 
 ### Profil partagé et sauvegarde automatique
 
-- **⚙ Mes informations** (carte dépliable en haut de page) : renseignez une fois votre entité, direction, identité et coordonnées, puis **« Appliquer à tous les onglets »** propage ces valeurs dans les 13 onglets.
+- **⚙ Mes informations** (carte dépliable en haut de page) : renseignez une fois votre entité, direction, identité et coordonnées, puis **« Appliquer à tous les onglets »** propage ces valeurs dans les 16 onglets.
 - **Sauvegarde automatique** : toutes les saisies sont conservées dans le navigateur (localStorage) et restaurées à la visite suivante. Le bouton **« Réinitialiser l'outil »** efface tout.
 - **Partage en équipe** : **« Exporter le profil (JSON) »** produit un fichier de configuration à diffuser (par exemple à tout un établissement) ; **« Importer un profil »** le recharge en un clic.
+
+### Génération en masse et dossier de réunion
+
+- **Génération en masse** (onglet dédié) : collez ou importez un CSV (colonnes `prenom`, `nom`, `poste`, `tel`, `mail` — virgule ou point-virgule, en-têtes tolérants aux variantes) et générez en un ZIP les signatures HTML et cartes de visite PNG de toute une équipe. Les lignes incomplètes (nom et prénom manquants) sont signalées et ignorées sans bloquer le reste.
+- **Dossier de réunion complet** (onglet Documents types) : un bouton génère un ZIP combinant convocation, ordre du jour et feuille d'émargement à partir des mêmes champs (date, lieu, points, participants), quel que soit le type actuellement affiché à l'écran.
+- **Feuille d'émargement** : tableau Nom / Qualité / Signature généré à partir de la liste de participants, avec lignes vierges supplémentaires optionnelles ; se pagine automatiquement sur plusieurs feuilles A4 si la liste est longue.
 
 ### Exports avancés
 
 - **SVG vectoriel** (onglet Bloc-marque) : picto Marianne en vrais tracés vectoriels (vectorisation potrace du PNG officiel), intitulé et devise en texte éditable, polices embarquées pour l'affichage navigateur. Pour l'imprimerie, vectoriser le texte dans Inkscape/Illustrator.
-- **Impression A4** (courrier, en-tête, note) : mise à l'échelle exacte 210 × 297 mm, une feuille par page, polices Marianne incluses.
+- **Impression A4** (courrier, en-tête, note, documents types, affiche, enveloppe) : mise à l'échelle exacte, une feuille par page, polices Marianne incluses.
 - **Copie mise en forme** (signature) : colle la signature directement formatée dans le compositeur du client mail (`ClipboardItem`), sans passer par le code HTML.
 - **QR code vCard** (carte de visite) : encodeur QR autonome embarqué (mode octet, correction M, versions 1-20), validé bit à bit contre la bibliothèque de référence python-qrcode. Le verso généré contient les coordonnées au format vCard 3.0, importables d'un scan dans n'importe quel téléphone.
+
+### Accessibilité et fiabilité
+
+- **Vérificateur de contraste RGAA** : sur les couleurs accent personnalisables (réseaux sociaux, présentation, affiche, visio), un indicateur calcule en direct le ratio de contraste WCAG texte blanc / couleur et signale les combinaisons insuffisantes (le jaune et l'orange de la charte, par exemple, ne passent pas avec du texte blanc).
+- **Validation des champs** : un bandeau d'alerte non bloquant signale les adresses mél mal formées, les champs requis manquants (nom/prénom en signature et carte de visite) et les intitulés de bloc-marque trop longs pour l'aperçu — sans jamais empêcher l'export.
 
 ### Interface DSFR (Système de Design de l'État)
 
@@ -47,7 +61,7 @@ L'interface utilise le **DSFR officiel v1.11.2** (`@gouvfr/dsfr`), embarqué dan
 - **En-tête** : bloc-marque officiel `fr-logo` (rendu pur CSS du DSFR).
 - **Composants** : onglets `fr-tabs`, boutons `fr-btn` primaire/secondaire, champs `fr-input`/`fr-select`, callouts `fr-callout` (bleu écume / brun caramel).
 - **Accessibilité** : rôles ARIA `tablist`/`tab`/`tabpanel`, `aria-selected`, anneau de focus DSFR, navigation clavier ← → entre onglets (RGAA).
-- Une fine surcouche CSS adapte le composant onglets au multi-rangées (13 onglets) et conserve la mise en page des aperçus documents ; licence DSFR : usage réservé aux acteurs publics.
+- Une fine surcouche CSS adapte le composant onglets au multi-rangées (16 onglets) et conserve la mise en page des aperçus documents ; licence DSFR : usage réservé aux acteurs publics.
 
 ---
 
