@@ -13,13 +13,14 @@ https://julientexier86.github.io/charte-graphique-etat-men/charte_etat_final_2.h
 
 | Onglet | Contenu | Export |
 |--------|---------|--------|
-| **Signature mail** | Bloc-marque + direction + coordonnées | HTML (Thunderbird / Outlook) |
-| **En-tête courrier** | En-tête A4 conforme charte SIG p. 38 | PNG |
-| **Note de service** | Mise en page deux colonnes Word | .docx |
+| **Bloc-marque** | Bloc-marque officiel (académie, région, DSDEN, direction, établissement) | PNG / **SVG vectoriel** / HTML |
+| **Signature mail** | Bloc-marque + direction + coordonnées | Copie mise en forme / HTML (Thunderbird / Outlook) |
+| **En-tête courrier** | En-tête A4 conforme charte SIG p. 38 | PNG / impression A4 |
+| **Note de service** | Mise en page deux colonnes Word | .docx / impression A4 |
 | **Communiqué de presse** | CP charte SIG | PNG / .doc |
 | **Carte de visite** | Recto conforme | PNG |
 | **Logo établissement** | Bloc-marque personnalisé (académie ou établissement) | PNG / HTML |
-| **Courrier officiel** | Gabarit dynamique A4 conforme p. 43 | .docx |
+| **Courrier officiel** | Gabarit dynamique A4 conforme p. 43, **pagination automatique multi-pages** | .docx / PNG par page / impression A4 |
 | **Réseaux sociaux** | Bannières Instagram (540×540), Twitter/X (960×540), Stories (1080×1920) | PNG |
 | **Présentation** | Diapo couverture + contenu 16/9 ou A4 | PNG / **.pptx** |
 | **Fond d'écran visio** | Arrière-plan Teams/Zoom 1920×1080 (styles bleu, blanc, split) | PNG |
@@ -29,6 +30,17 @@ https://julientexier86.github.io/charte-graphique-etat-men/charte_etat_final_2.h
 
 - **⚙ Mes informations** (carte dépliable en haut de page) : renseignez une fois votre entité, direction, identité et coordonnées, puis **« Appliquer à tous les onglets »** propage ces valeurs dans les 12 onglets.
 - **Sauvegarde automatique** : toutes les saisies sont conservées dans le navigateur (localStorage) et restaurées à la visite suivante. Le bouton **« Réinitialiser l'outil »** efface tout.
+- **Partage en équipe** : **« Exporter le profil (JSON) »** produit un fichier de configuration à diffuser (par exemple à tout un établissement) ; **« Importer un profil »** le recharge en un clic.
+
+### Exports avancés
+
+- **SVG vectoriel** (onglet Bloc-marque) : picto Marianne en vrais tracés vectoriels (vectorisation potrace du PNG officiel), intitulé et devise en texte éditable, polices embarquées pour l'affichage navigateur. Pour l'imprimerie, vectoriser le texte dans Inkscape/Illustrator.
+- **Impression A4** (courrier, en-tête, note) : mise à l'échelle exacte 210 × 297 mm, une feuille par page, polices Marianne incluses.
+- **Copie mise en forme** (signature) : colle la signature directement formatée dans le compositeur du client mail (`ClipboardItem`), sans passer par le code HTML.
+
+### Interface alignée sur le DSFR
+
+L'interface reprend les principes du [Système de Design de l'État](https://www.systeme-de-design.gouv.fr/) sans embarquer le framework (contrainte fichier unique) : palette de tokens (bleu France `#000091`, gris DSFR), onglets DSFR, champs de saisie à soulignement, boutons rectangulaires primaire/secondaire, callouts, anneau de focus `#0A76F6`, rôles ARIA `tablist`/`tab`/`tabpanel` et navigation clavier ← → entre onglets (RGAA). Pour une ouverture au-delà des services déconcentrés, la migration complète vers `@gouvfr/dsfr` est la suite logique.
 
 ---
 
