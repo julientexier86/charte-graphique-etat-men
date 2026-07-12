@@ -18,17 +18,18 @@ https://julientexier86.github.io/charte-graphique-etat-men/charte_etat_final_2.h
 | **En-tête courrier** | En-tête A4 conforme charte SIG p. 38 | PNG / impression A4 |
 | **Note de service** | Mise en page deux colonnes Word | .docx / impression A4 |
 | **Communiqué de presse** | CP charte SIG | PNG / .doc |
-| **Carte de visite** | Recto conforme | PNG |
+| **Carte de visite** | Recto conforme + **verso QR code vCard** (coordonnées scannables) | PNG recto / PNG verso |
 | **Logo établissement** | Bloc-marque personnalisé (académie ou établissement) | PNG / HTML |
 | **Courrier officiel** | Gabarit dynamique A4 conforme p. 43, **pagination automatique multi-pages** | .docx / PNG par page / impression A4 |
 | **Réseaux sociaux** | Bannières Instagram (540×540), Twitter/X (960×540), Stories (1080×1920) | PNG |
 | **Présentation** | Diapo couverture + contenu 16/9 ou A4 | PNG / **.pptx** |
 | **Fond d'écran visio** | Arrière-plan Teams/Zoom 1920×1080 (styles bleu, blanc, split) | PNG |
+| **Documents types** | **Convocation · ordre du jour · attestation** — gabarits A4 à champs adaptatifs | .doc / PNG / impression A4 / HTML |
 | **Gabarits officiels** | Modèles Office MEN (papeterie, présentation 16:9 et 4:3) + diaporama académie de Poitiers | .docx / .pptx |
 
 ### Profil partagé et sauvegarde automatique
 
-- **⚙ Mes informations** (carte dépliable en haut de page) : renseignez une fois votre entité, direction, identité et coordonnées, puis **« Appliquer à tous les onglets »** propage ces valeurs dans les 12 onglets.
+- **⚙ Mes informations** (carte dépliable en haut de page) : renseignez une fois votre entité, direction, identité et coordonnées, puis **« Appliquer à tous les onglets »** propage ces valeurs dans les 13 onglets.
 - **Sauvegarde automatique** : toutes les saisies sont conservées dans le navigateur (localStorage) et restaurées à la visite suivante. Le bouton **« Réinitialiser l'outil »** efface tout.
 - **Partage en équipe** : **« Exporter le profil (JSON) »** produit un fichier de configuration à diffuser (par exemple à tout un établissement) ; **« Importer un profil »** le recharge en un clic.
 
@@ -37,10 +38,16 @@ https://julientexier86.github.io/charte-graphique-etat-men/charte_etat_final_2.h
 - **SVG vectoriel** (onglet Bloc-marque) : picto Marianne en vrais tracés vectoriels (vectorisation potrace du PNG officiel), intitulé et devise en texte éditable, polices embarquées pour l'affichage navigateur. Pour l'imprimerie, vectoriser le texte dans Inkscape/Illustrator.
 - **Impression A4** (courrier, en-tête, note) : mise à l'échelle exacte 210 × 297 mm, une feuille par page, polices Marianne incluses.
 - **Copie mise en forme** (signature) : colle la signature directement formatée dans le compositeur du client mail (`ClipboardItem`), sans passer par le code HTML.
+- **QR code vCard** (carte de visite) : encodeur QR autonome embarqué (mode octet, correction M, versions 1-20), validé bit à bit contre la bibliothèque de référence python-qrcode. Le verso généré contient les coordonnées au format vCard 3.0, importables d'un scan dans n'importe quel téléphone.
 
-### Interface alignée sur le DSFR
+### Interface DSFR (Système de Design de l'État)
 
-L'interface reprend les principes du [Système de Design de l'État](https://www.systeme-de-design.gouv.fr/) sans embarquer le framework (contrainte fichier unique) : palette de tokens (bleu France `#000091`, gris DSFR), onglets DSFR, champs de saisie à soulignement, boutons rectangulaires primaire/secondaire, callouts, anneau de focus `#0A76F6`, rôles ARIA `tablist`/`tab`/`tabpanel` et navigation clavier ← → entre onglets (RGAA). Pour une ouverture au-delà des services déconcentrés, la migration complète vers `@gouvfr/dsfr` est la suite logique.
+L'interface utilise le **DSFR officiel v1.11.2** (`@gouvfr/dsfr`), embarqué dans le fichier (feuille de style complète, sans les `@font-face` — les polices Marianne sont déjà incluses — ni fichiers d'icônes externes) :
+
+- **En-tête** : bloc-marque officiel `fr-logo` (rendu pur CSS du DSFR).
+- **Composants** : onglets `fr-tabs`, boutons `fr-btn` primaire/secondaire, champs `fr-input`/`fr-select`, callouts `fr-callout` (bleu écume / brun caramel).
+- **Accessibilité** : rôles ARIA `tablist`/`tab`/`tabpanel`, `aria-selected`, anneau de focus DSFR, navigation clavier ← → entre onglets (RGAA).
+- Une fine surcouche CSS adapte le composant onglets au multi-rangées (13 onglets) et conserve la mise en page des aperçus documents ; licence DSFR : usage réservé aux acteurs publics.
 
 ---
 
