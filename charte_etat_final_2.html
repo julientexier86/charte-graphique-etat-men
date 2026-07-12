@@ -746,6 +746,9 @@ Les personnels concernés sont invités à prendre connaissance des dispositions
         <option value="insta">Instagram carré 540×540</option>
         <option value="twitter">Twitter/X 960×540</option>
         <option value="stories">Stories 9/16 1080×1920</option>
+        <option value="linkedin">LinkedIn 1200×627</option>
+        <option value="fbcover">Couverture Facebook 851×315</option>
+        <option value="ytthumb">Miniature YouTube 1280×720</option>
       </select>
     </div>
   </div>
@@ -900,6 +903,7 @@ En cas d'empêchement, merci d'en informer le secrétariat dans les meilleurs d�
     <button class="fr-btn fr-btn--sm" onclick="exportPagesPNG('doctype-out', document.getElementById('dt-type').value)" style="background:#E1000F;">⬇ Exporter PNG</button>
     <button class="fr-btn fr-btn--sm fr-btn--secondary" onclick="printDoc('doctype-out')">🖨 Imprimer</button>
     <button class="fr-btn fr-btn--sm" onclick="dlHTML('doctype-out', document.getElementById('dt-type').value)">⬇ Télécharger HTML A4</button>
+    <button class="fr-btn fr-btn--sm fr-btn--secondary" id="btn-ics" onclick="dlIcsInvitation()">📅 Télécharger l'invitation (.ics)</button>
   </div>
   <div class="info fr-callout fr-callout--blue-ecume" style="margin-top:16px;margin-bottom:0;">📦 <strong>Dossier de réunion complet</strong> : génère en un ZIP la convocation, l'ordre du jour et la feuille d'émargement à partir des champs ci-dessus (quel que soit le type actuellement affiché).</div>
   <div class="btns">
@@ -912,7 +916,7 @@ En cas d'empêchement, merci d'en informer le secrétariat dans les meilleurs d�
 <div class="panel" id="panel-masse">
 <div class="card">
   <div class="card-title">Génération en masse — signatures et cartes de visite d'équipe</div>
-  <div class="info fr-callout fr-callout--blue-ecume">Importez ou collez un annuaire CSV (colonnes : prénom, nom, poste, tél, mél — séparateur virgule ou point-virgule) pour générer en un clic les signatures et/ou cartes de visite de toute une équipe, regroupées dans un fichier ZIP. Le vrai changement d'échelle pour une délégation qui gère 50 ou 200 agents.</div>
+  <div class="info fr-callout fr-callout--blue-ecume">Importez ou collez un annuaire CSV (colonnes : prénom, nom, poste, tél, mél — séparateur virgule ou point-virgule) pour générer en un clic les signatures, cartes de visite et/ou badges nominatifs de toute une équipe, regroupés dans un fichier ZIP. Le vrai changement d'échelle pour une délégation qui gère 50 ou 200 agents, ou un colloque à badger.</div>
   <div class="g2">
     <div class="fg fr-input-group full"><label class="fr-label">Fichier CSV (optionnel)</label><input class="fr-input" id="csv-file" type="file" accept=".csv,text/csv" onchange="loadCSVFile(event)"/></div>
     <div class="fg fr-input-group full"><label class="fr-label">Données CSV (modifiable)</label><textarea class="fr-input" id="csv-data" rows="6" oninput="previewCSV()">prenom,nom,poste,tel,mail
@@ -924,9 +928,11 @@ Sophie,Bernard,CPE,05 49 00 00 02,sophie.bernard@ac-poitiers.fr</textarea></div>
     <div class="fg fr-input-group full"><label class="fr-label">Direction / Service</label><input class="fr-input" id="csv-dir" value="Collège Jean Jaurès — Gençay" oninput="previewCSV()"/></div>
     <div class="fg fr-input-group full"><label class="fr-label">Adresse</label><input class="fr-input" id="csv-adr" value="1 rue de la République — 86160 Gençay" oninput="previewCSV()"/></div>
     <div class="fg fr-input-group full"><label class="fr-label">Site web (signatures)</label><input class="fr-input" id="csv-web" value="www.ac-poitiers.fr" oninput="previewCSV()"/></div>
-    <div class="fg fr-input-group full"><label class="fr-label" style="display:flex;gap:20px;text-transform:none;letter-spacing:0;">
+    <div class="fg fr-input-group full"><label class="fr-label">Nom de l'événement (badges, optionnel)</label><input class="fr-input" id="csv-event" value="Journée portes ouvertes 2026" oninput="previewCSV()"/></div>
+    <div class="fg fr-input-group full"><label class="fr-label" style="display:flex;gap:20px;text-transform:none;letter-spacing:0;flex-wrap:wrap;">
       <span style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="csv-gen-sig" checked style="width:auto;margin:0;"/> Signatures (HTML)</span>
       <span style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="csv-gen-cv" checked style="width:auto;margin:0;"/> Cartes de visite (PNG)</span>
+      <span style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="csv-gen-badge" style="width:auto;margin:0;"/> Badges nominatifs (PNG)</span>
     </label></div>
   </div>
   <div class="plabel">Aperçu des données</div>
@@ -1516,6 +1522,21 @@ function renderCP() {
 </div>`;
 }
 
+function buildBadgeHTML(d) {
+  const p = PICTO.color.sm;
+  const pw = Math.round(p.w * DOC_BLOC_SCALE * 0.8), ph = Math.round(p.h * DOC_BLOC_SCALE * 0.8);
+  return `
+<div style="width:340px;height:490px;background:#fff;border:1px solid #ddd;display:flex;flex-direction:column;align-items:center;padding:24px 20px;box-sizing:border-box;font-family:Marianne,Arial,sans-serif;text-align:center;">
+  <img src="${p.uri}" width="${pw}" height="${ph}" style="display:block;"/>
+  <div style="margin-top:6px;${M_BOLD}font-size:11px;color:${BLEU};letter-spacing:.05em;">${esc(d.e1)} ${esc(d.e2)}</div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+    <div style="${M_BOLD}font-size:26px;color:${NOIR};line-height:1.2;">${esc(d.pre)}</div>
+    <div style="${M_BOLD}font-size:26px;color:${NOIR};line-height:1.2;text-transform:uppercase;">${esc(d.nom)}</div>
+    ${d.pos?`<div style="${M_REG}font-size:14px;color:#555;margin-top:10px;">${esc(d.pos)}</div>`:''}
+  </div>
+  ${d.event?`<div style="${M_BOLD}font-size:12px;color:#fff;background:${ROUGE};padding:6px 14px;border-radius:2px;">${esc(d.event)}</div>`:''}
+</div>`;
+}
 function buildCVRectoHTML(d) {
   const p = PICTO.color.sm;
   const ph = Math.round(p.h * DOC_BLOC_SCALE), pw = Math.round(p.w * DOC_BLOC_SCALE);
@@ -1573,6 +1594,46 @@ function renderCV() {
 function exportCVVerso() {
   if (!document.getElementById('cv-verso')) { toast('Cochez d\u2019abord « Ajouter un verso avec QR code vCard »'); return; }
   exportPNG('cv-verso', 'carte-visite-verso');
+}
+
+// ── Invitation calendrier .ics (convocation / ODJ / émargement) ───
+function parseHeureFr(s) {
+  const m = String(s || '').match(/(\d{1,2})\s*[h:]\s*(\d{0,2})/i);
+  if (!m) return { h: 9, m: 0 };
+  return { h: parseInt(m[1], 10) || 0, m: parseInt(m[2], 10) || 0 };
+}
+function icsEscape(s) { return String(s || '').replace(/\\/g, '\\\\').replace(/[,;]/g, m => '\\' + m).replace(/\n/g, '\\n'); }
+function icsDateUTC(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + 'T' + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds()) + 'Z';
+}
+function buildICS(o) {
+  const d = o.date ? new Date(o.date + 'T00:00:00') : new Date();
+  const { h, m } = parseHeureFr(o.heure);
+  const start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, m, 0);
+  const end = new Date(start.getTime() + 60 * 60 * 1000);
+  const uid = 'evt-' + Date.now() + '@charte-etat';
+  return ['BEGIN:VCALENDAR', 'VERSION:2.0', "PRODID:-//Charte graphique de l'État//FR", 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    'UID:' + uid,
+    'DTSTAMP:' + icsDateUTC(new Date()),
+    'DTSTART:' + icsDateUTC(start),
+    'DTEND:' + icsDateUTC(end),
+    'SUMMARY:' + icsEscape(o.titre),
+    o.lieu ? 'LOCATION:' + icsEscape(o.lieu) : '',
+    o.desc ? 'DESCRIPTION:' + icsEscape(o.desc) : '',
+    'END:VEVENT',
+    'END:VCALENDAR'].filter(Boolean).join('\r\n');
+}
+function dlIcsInvitation() {
+  const titre = v('dt-obj') || 'Réunion';
+  const lieu = v('dt-lieu');
+  const heure = v('dt-heure');
+  const date = document.getElementById('dt-date').value;
+  const emit = v('dt-emit');
+  const ics = buildICS({ titre, lieu, heure, date, desc: emit ? 'Convoqué(e) par ' + emit : '' });
+  dlBlob(ics, 'text/calendar', 'invitation-reunion.ics');
+  toast('Invitation calendrier téléchargée (.ics)');
 }
 
 // ── vCard 3.0 pour le QR code ─────────────────────────────────────
@@ -1862,6 +1923,7 @@ function renderDoctype(typeChanged) {
   show('g-dt-ville',  type === 'attestation');
   show('g-dt-participants', type === 'emargement');
   show('g-dt-vierges', type === 'emargement');
+  document.getElementById('btn-ics').style.display = type !== 'attestation' ? 'inline-flex' : 'none';
   if (typeChanged) {
     const bodyEl = document.getElementById('dt-body');
     const defs = Object.values(DT_BODY_DEFAULTS);
@@ -1981,8 +2043,10 @@ async function dlMassZip() {
   if (!rows.length) { toast('Aucune ligne valide dans le CSV'); return; }
   const genSig = document.getElementById('csv-gen-sig').checked;
   const genCV = document.getElementById('csv-gen-cv').checked;
-  if (!genSig && !genCV) { toast('Cochez au moins un type de document à générer'); return; }
+  const genBadge = document.getElementById('csv-gen-badge').checked;
+  if (!genSig && !genCV && !genBadge) { toast('Cochez au moins un type de document à générer'); return; }
   const orgL1 = v('csv-l1'), orgL2 = v('csv-l2'), orgDir = v('csv-dir'), orgAdr = v('csv-adr'), orgWeb = v('csv-web');
+  const eventName = v('csv-event');
   toast('Génération en cours — ' + rows.length + ' personne(s)…');
   try {
     const entries = [];
@@ -1996,6 +2060,11 @@ async function dlMassZip() {
         const html = buildCVRectoHTML({ e1: orgL1, e2: orgL2, dir: orgDir, pre: r.prenom, nom: r.nom.toUpperCase(), pos: r.poste, adr: orgAdr, tel: r.tel, mel: r.mail });
         const bytes = await captureHTMLToPNGBytes(`<div style="background:#fff;display:inline-block;">${html}</div>`);
         entries.push({ name: 'cartes-visite/' + base + '.png', data: bytes });
+      }
+      if (genBadge) {
+        const html = buildBadgeHTML({ e1: orgL1, e2: orgL2, pre: r.prenom, nom: r.nom.toUpperCase(), pos: r.poste, event: eventName });
+        const bytes = await captureHTMLToPNGBytes(`<div style="display:inline-block;">${html}</div>`);
+        entries.push({ name: 'badges/' + base + '.png', data: bytes });
       }
     }
     const zip = makeZip(entries);
@@ -2495,9 +2564,12 @@ function renderRS() {
   var bg=v('rs-bg'), fmt=v('rs-fmt');
   var p=PICTO.color.sm;
   var W, H, scale;
-  if (fmt==='insta')        { W=540;  H=540;  scale=0.52; }
-  else if (fmt==='twitter') { W=960;  H=540;  scale=0.44; }
-  else                      { W=1080; H=1920; scale=0.22; }
+  if (fmt==='insta')         { W=540;  H=540;  scale=0.52; }
+  else if (fmt==='twitter')  { W=960;  H=540;  scale=0.44; }
+  else if (fmt==='linkedin') { W=1200; H=627;  scale=0.36; }
+  else if (fmt==='fbcover')  { W=851;  H=315;  scale=0.5;  }
+  else if (fmt==='ytthumb')  { W=1280; H=720;  scale=0.34; }
+  else                       { W=1080; H=1920; scale=0.22; }
   var pw=Math.round(p.w*DOC_BLOC_SCALE*1.4);
   var ph=Math.round(p.h*DOC_BLOC_SCALE*1.4);
   var iFS=Math.round(ph*0.68);

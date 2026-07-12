@@ -21,11 +21,11 @@ https://julientexier86.github.io/charte-graphique-etat-men/charte_etat_final_2.h
 | **Carte de visite** | Recto conforme + **verso QR code vCard** (coordonnées scannables) | PNG recto / PNG verso |
 | **Logo établissement** | Bloc-marque personnalisé (académie ou établissement) | PNG / HTML |
 | **Courrier officiel** | Gabarit dynamique A4 conforme p. 43, **pagination automatique multi-pages** | .docx / PNG par page / impression A4 |
-| **Réseaux sociaux** | Bannières Instagram (540×540), Twitter/X (960×540), Stories (1080×1920) | PNG |
+| **Réseaux sociaux** | Bannières Instagram (540×540), Twitter/X (960×540), Stories (1080×1920), **LinkedIn (1200×627), couverture Facebook (851×315), miniature YouTube (1280×720)** | PNG |
 | **Présentation** | Diapo couverture + contenu 16/9 ou A4 | PNG / **.pptx** |
 | **Fond d'écran visio** | Arrière-plan Teams/Zoom 1920×1080 (styles bleu, blanc, split) | PNG |
-| **Documents types** | **Convocation · ordre du jour · attestation · feuille d'émargement** — gabarits A4 à champs adaptatifs, émargement paginé automatiquement | .doc / PNG / impression A4 / HTML |
-| **Génération en masse** | Import CSV annuaire (prénom, nom, poste, tél, mél) → signatures et cartes de visite de toute une équipe | ZIP (HTML + PNG) |
+| **Documents types** | **Convocation · ordre du jour · attestation · feuille d'émargement** — gabarits A4 à champs adaptatifs, émargement paginé automatiquement, **invitation calendrier jointe** | .doc / PNG / impression A4 / HTML / **.ics** |
+| **Génération en masse** | Import CSV annuaire (prénom, nom, poste, tél, mél) → signatures, cartes de visite et **badges nominatifs** de toute une équipe | ZIP (HTML + PNG) |
 | **Affiche événement** | Flyer A4/A3 portrait : accroche, bloc date/heure/lieu, description, contact | PNG / impression / HTML |
 | **Étiquette / Enveloppe** | Bloc-marque expéditeur réduit + destinataire, enveloppe DL (220×110 mm) ou étiquette | PNG / impression / HTML |
 | **Gabarits officiels** | Modèles Office MEN (papeterie, présentation 16:9 et 4:3) + diaporama académie de Poitiers | .docx / .pptx |
@@ -38,9 +38,10 @@ https://julientexier86.github.io/charte-graphique-etat-men/charte_etat_final_2.h
 
 ### Génération en masse et dossier de réunion
 
-- **Génération en masse** (onglet dédié) : collez ou importez un CSV (colonnes `prenom`, `nom`, `poste`, `tel`, `mail` — virgule ou point-virgule, en-têtes tolérants aux variantes) et générez en un ZIP les signatures HTML et cartes de visite PNG de toute une équipe. Les lignes incomplètes (nom et prénom manquants) sont signalées et ignorées sans bloquer le reste.
+- **Génération en masse** (onglet dédié) : collez ou importez un CSV (colonnes `prenom`, `nom`, `poste`, `tel`, `mail` — virgule ou point-virgule, en-têtes tolérants aux variantes) et générez en un ZIP les signatures HTML, cartes de visite PNG et **badges nominatifs** (nom, poste, événement) de toute une équipe. Les lignes incomplètes (nom et prénom manquants) sont signalées et ignorées sans bloquer le reste.
 - **Dossier de réunion complet** (onglet Documents types) : un bouton génère un ZIP combinant convocation, ordre du jour et feuille d'émargement à partir des mêmes champs (date, lieu, points, participants), quel que soit le type actuellement affiché à l'écran.
 - **Feuille d'émargement** : tableau Nom / Qualité / Signature généré à partir de la liste de participants, avec lignes vierges supplémentaires optionnelles ; se pagine automatiquement sur plusieurs feuilles A4 si la liste est longue.
+- **Invitation calendrier (.ics)** : sur les convocations, ordres du jour et feuilles d'émargement, un bouton génère un fichier `.ics` standard (date, heure, lieu) que les destinataires ajoutent à leur agenda en un clic — Outlook, Thunderbird/Lightning, Google Calendar, Apple Calendar.
 
 ### Exports avancés
 
